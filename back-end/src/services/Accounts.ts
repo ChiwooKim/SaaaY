@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { request } from "http";
 import db_config from "../config/db-config.json";
 
 export class Accounts {
@@ -45,7 +46,7 @@ export class Accounts {
 
     try {
       result = await session.run(
-        `MATCH (me) <- [:FOLLOW] - (target) WHERE id(me) = ${targetId} RETURN target`
+        `MATCH (me) - [:FOLLOW] -> (target) WHERE id(me) = ${targetId} RETURN target`
       );
       const followerList = [];
 
@@ -59,5 +60,30 @@ export class Accounts {
     await driver.close();
 
     return result.records;
+  }
+
+  public async addMyFollowerList(targetId: string, myId: string) {
+    const driver = this.neo4j.driver(
+      this.uri,
+      this.neo4j.auth.basic(this.user, this.password)
+    );
+    const session = driver.session();
+
+    try {
+      let result = await session.run(
+        `MATCH (me) - [rel:FOLLOW] ->(target) WHERE id(me) = ${myId} AND id(target) = ${targetId} RETURN rel`
+      );
+      if (result.records[0]) {
+        return false;
+      }
+      await session.run(
+        `MATCH (me), (target) WHERE id(me) = ${myId} AND id(target) = ${targetId} CREATE (me) - [:FOLLOW] -> (target)`
+      );
+    } finally {
+      await session.close();
+    }
+
+    await driver.close();
+    return true;
   }
 }

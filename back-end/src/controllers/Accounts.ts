@@ -34,3 +34,24 @@ export const getFollowingList: RequestHandler<{ id: string }> = (
     console.log(err);
   });
 };
+
+export const createFollow: RequestHandler<{ id: string }> = (
+  req,
+  res,
+  next
+) => {
+  const targetId = req.params.id;
+  const myId = "4";
+
+  async function addMyFollowerList(targetId: string, myId: string) {
+    const result = await accounts.addMyFollowerList(targetId, myId);
+    if (result) {
+      res.status(201).json({ message: "request successed" });
+    } else {
+      res.status(400).json({ message: "request failed" });
+    }
+  }
+  addMyFollowerList(targetId, myId).catch((err) => {
+    console.log(err);
+  });
+};
