@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts">
-import _ from 'lodash';
+import * as _ from 'lodash';
 import gsap from 'gsap';
 
 export default {
