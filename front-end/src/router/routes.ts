@@ -7,6 +7,16 @@ const routes: RouteRecordRaw[] = [
     children: [{ path: '', component: () => import('pages/Index.vue') }],
   },
 
+  {
+    path: '/month',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('src/pages/CalendarMonth.vue') }],
+  },
+  {
+    path: '/day/',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('src/pages/CalenderDay.vue') }],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
