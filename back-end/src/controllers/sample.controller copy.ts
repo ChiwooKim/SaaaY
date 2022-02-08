@@ -1,26 +1,26 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from 'express';
 
-import { SampleService } from "../services/SampleService";
+import { SampleService } from '../services/sample.service';
 
 const sampleService = new SampleService();
 
 export const createTodo: RequestHandler = (req, res, next) => {
-    console.log('createTodo');
+  console.log('createTodo');
   const text = (req.body as { text: string }).text;
 
   const newTodo = sampleService.createTodo(text);
 
-  res.status(201).json({ message: "Created the todo.", createTodo: newTodo });
+  res.status(201).json({ message: 'Created the todo.', createTodo: newTodo });
 };
 
 export const getTodos: RequestHandler = (req, res, next) => {
-    console.log('getTodos');
+  console.log('getTodos');
   const todos = sampleService.getTodos();
   res.json({ todos: todos });
 };
 
 export const updateTodo: RequestHandler<{ id: string }> = (req, res, next) => {
-    console.log('updateTodo');
+  console.log('updateTodo');
   const todoId = req.params.id;
 
   const updatedText = (req.body as { text: string }).text;
@@ -29,14 +29,14 @@ export const updateTodo: RequestHandler<{ id: string }> = (req, res, next) => {
 
   const updatedTodo = sampleService.updateTodo(todoId, updatedText);
 
-  res.json({ message: "Updated!", updatedTodo: updatedTodo });
+  res.json({ message: 'Updated!', updatedTodo: updatedTodo });
 };
 
 export const deleteTodo: RequestHandler<{ id: string }> = (req, res, next) => {
-    console.log('deleteTodo');
+  console.log('deleteTodo');
   const todoId = req.params.id;
 
   sampleService.deleteTodo(todoId);
 
-  res.json({ message: "Todo deleted!" });
+  res.json({ message: 'Todo deleted!' });
 };
