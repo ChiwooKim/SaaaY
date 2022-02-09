@@ -85,9 +85,46 @@ export class SampleController {
     this.sampleService
       .findUser('1') // 유저 엔티티를 가져옴
       .then((user) => {
+        console.log(user);
         newTodo.user = user; // todo 의 user 에는 조회한 user 를 세팅
-        user.todos.push(newTodo); // 유저의 todos 에는 새로 만든 todo 를 push
+        this.sampleService.saveOne(newTodo);
+        console.log('new todo saved');
+        res.status(HttpStatus.OK).send();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(HttpStatus.BAD_GATEWAY);
       });
-    this.sampleService.saveOne(newTodo);
+  }
+
+  @Get('/query')
+  getAllWithQuery(@Res() res: Response) {
+    this.sampleService.findAllWithRawQuery().then((users) => {
+      console.log(users);
+      res.status(HttpStatus.OK).json(users);
+    });
+  }
+
+  @Get('/orm')
+  getAllWithORM(@Res() res: Response) {
+    this.sampleService.findAllWithORM().then((users) => {
+      console.log(users);
+      res.status(HttpStatus.OK).json(users);
+    });
+  }
+
+  @Get('/orm/:userId')
+  getOneWithORM(@Param('userId') userId: string, @Res() res: Response) {
+    this.sampleService.findOneWithORM(userId).then((users) => {
+      console.log(users);
+      res.status(HttpStatus.OK).json(users);
+    });
+  }
+
+  @Post('/orm')
+  postUser(@Body() user: { name: string }, @Res() res: Response) {
+    this.sampleService.createUserWithORM(user).then(() => {
+      res.status(HttpStatus.OK).send();
+    });
   }
 }

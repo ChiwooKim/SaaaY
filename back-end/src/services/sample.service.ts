@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
 import { TestTodo } from 'src/entity/todo.entity';
 import { TestUser } from 'src/entity/user.entity';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 
 import { TodoDto } from '../models/todo.dto';
 
@@ -17,7 +17,12 @@ export class SampleService {
     private readonly todoRepository: Repository<TestTodo>,
     @InjectRepository(TestUser)
     private readonly userRepository: Repository<TestUser>,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
+
+  public async findAllWithRawQuery() {
+    return this.connection.query('SELECT * FROM test_user');
+  }
 
   /**
    * User 조회
@@ -98,5 +103,19 @@ export class SampleService {
     }
 
     this.TODOS.splice(todoIndex, 1);
+  }
+
+  public findAllWithORM() {
+    return this.userRepository.find();
+  }
+
+  public findOneWithORM(userId: string) {
+    return this.userRepository.findOne(userId);
+  }
+
+  public createUserWithORM(user: { name: string }) {
+    const userEntity = new TestUser();
+    userEntity.name = user.name; // 엔티티 안 넣어도 되네요??
+    return this.userRepository.save(user);
   }
 }

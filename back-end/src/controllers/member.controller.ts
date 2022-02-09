@@ -22,14 +22,14 @@ export class MemberController {
   getMember(@Param('memberId') memberId: string, @Res() res: Response) {
     res.status(HttpStatus.OK);
 
-    // this.memberService
-    //   .findMember(memberId)
-    //   .then((m) => {
-    //     res.status(HttpStatus.OK).json(m);
-    //   })
-    //   .catch((err) => {
-    //     res.status(HttpStatus.BAD_REQUEST);
-    //     console.log(err);
-    //   });
+    this.memberService
+      .findMember('1')
+      .then((m) => {
+        res.status(HttpStatus.OK).json(m);
+      })
+      .catch((err) => {
+        res.status(HttpStatus.BAD_REQUEST).send();
+        console.log(err);
+      });
   }
 }

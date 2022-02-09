@@ -80,3 +80,9 @@ Nest is [MIT licensed](LICENSE).
 - services : repository (Database 계층) 를 import 하고 로직에 따라 repository 의 쿼리를 실행시킨다
 - repository : DB 연결 및 CRUD 를 담당한다
 - models : 필요한 DTO 및 DAO 를 정의한다
+
+## DB Table Sync
+
+```bash
+yarn typeorm schema:sync
+```
