@@ -13,6 +13,8 @@ import { MemberService } from './services/member.service';
 import { Member } from './entity/member.entity';
 import { Oauth } from './entity/oauth.entity';
 import { Role } from './entity/role.entity';
+import { AccountController } from './controllers/account.controller';
+import { AccountService } from './services/account.service';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
@@ -26,8 +28,15 @@ import { Role } from './entity/role.entity';
     AppController,
     SampleController,
     RoomController,
+    AccountController,
     MemberController,
   ],
-  providers: [AppService, SampleService, RoomService, MemberService],
+  providers: [
+    AppService,
+    SampleService,
+    RoomService,
+    AccountService,
+    MemberService,
+  ],
 })
 export class AppModule {}

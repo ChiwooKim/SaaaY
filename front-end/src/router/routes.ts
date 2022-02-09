@@ -11,6 +11,12 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
+    path: '/account',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/account.vue') }],
+  },
+
+  {
     path: '/calendar',
     component: () => import('layouts/MainLayout.vue'),
     children: [{ path: '', component: () => import('src/pages/Calendar.vue') }],

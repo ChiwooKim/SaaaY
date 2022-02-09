@@ -1,3 +1,14 @@
+import { Injectable } from '@nestjs/common';
+import { getFollowerList } from '../repositories/account.repository';
+
+@Injectable()
+export class AccountService {
+  public async getFollowerList(targetId: string) {
+    const result = await getFollowerList(targetId);
+    return result;
+  }
+}
+
 // import db_config from '../config/db-config.json';
 
 // function test(): { selectedDate: string } {
