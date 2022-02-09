@@ -46,6 +46,8 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^7.0.0",
     "prettier": "^2.5.1",
+    "@vitejs/plugin-vue": "^1.2.2",
+    "@vue/compiler-sfc": "^3.0.11",
     "typescript": "^4.2.4",
     "vite": "^2.3.2"
   },
