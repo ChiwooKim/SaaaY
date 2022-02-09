@@ -5,8 +5,15 @@ import { SampleService } from './services/sample.service';
 import { SampleController } from './controllers/sample.controller';
 import { RoomController } from './controllers/room.controller';
 import { RoomService } from './services/room.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TestUser } from './entity/sample/user.entity';
+import { TestTodo } from './entity/sample/todo.entity';
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forRoot(),
+    TypeOrmModule.forFeature([TestUser]),
+    TypeOrmModule.forFeature([TestTodo]),
+  ],
   controllers: [AppController, SampleController, RoomController],
   providers: [AppService, SampleService, RoomService],
 })

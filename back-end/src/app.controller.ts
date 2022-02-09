@@ -5,8 +5,10 @@ import { TodoDto } from './models/todo.dto';
 
 @Controller()
 export class AppController {
-  private sampleService: SampleService = new SampleService();
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly sampleService: SampleService,
+  ) {}
 
   @Get()
   getHello(): string {
