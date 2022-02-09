@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TestTodo } from 'src/entity/todo.entity';
+import { TestUser } from 'src/entity/user.entity';
+import { Repository } from 'typeorm';
 
 import { TodoDto } from '../models/todo.dto';
 
@@ -7,6 +11,49 @@ export class SampleService {
   // 여기에는 DB 커넥션 객체
   private TODOS: TodoDto[] = [];
   private generateId = 0;
+
+  constructor(
+    @InjectRepository(TestTodo)
+    private readonly todoRepository: Repository<TestTodo>,
+    @InjectRepository(TestUser)
+    private readonly userRepository: Repository<TestUser>,
+  ) {}
+
+  /**
+   * User 조회
+   * @param id
+   */
+  public async findUser(id: string): Promise<TestUser> {
+    return this.userRepository.findOne(id);
+  }
+  /**
+   * Todo 리스트 조회
+   */
+  public async findAll(): Promise<TestTodo[]> {
+    return this.todoRepository.find();
+  }
+  /**
+   * 특정 Todo 조회
+   * @param id
+   */
+  public findOne(id: string): Promise<TestTodo> {
+    return this.todoRepository.findOne(id);
+  }
+  /**
+   * Todo 저장
+   * @param todo
+   * 저장할때는 todo 엔티티를 만들어서 넣어야 한다
+   */
+  public async saveOne(todo: TestTodo): Promise<void> {
+    await this.todoRepository.save(todo);
+  }
+  /**
+   * Todo 삭제
+   */
+  public async deleteOne(id: string): Promise<void> {
+    await this.todoRepository.delete(id);
+  }
+  // 이외에도 todoRepository 에 . 찍어보면 여러 메서드 확인 가능
 
   public createTodo(text: string): TodoDto {
     const newTodo = new TodoDto(this.generateId.toString(), text);

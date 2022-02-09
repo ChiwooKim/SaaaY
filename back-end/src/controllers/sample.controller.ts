@@ -10,6 +10,9 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { TestTodo } from 'src/entity/todo.entity';
+import { TestUser } from 'src/entity/user.entity';
+import { TodoDto } from 'src/models/todo.dto';
 
 import { SampleService } from '../services/sample.service';
 
@@ -57,5 +60,34 @@ export class SampleController {
     this.sampleService.deleteTodo(todoId);
 
     res.status(HttpStatus.OK).json({ message: 'Todo deleted!' });
+  }
+
+  // typeorm 사용 예시
+  @Get('/todo')
+  getTodosByTypeorm(@Res() res: Response) {
+    // Promise 로 반환되는데 이런식으로 then, catch 문으로 사용 가능
+    this.sampleService
+      .findAll()
+      .then((todos) => {
+        console.log(todos);
+        res.status(HttpStatus.OK).json(todos);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(HttpStatus.BAD_REQUEST);
+      });
+  }
+
+  @Post('/todo/:userId')
+  postTodosByTypeorm(@Body() todoDto: TodoDto, @Res() res: Response) {
+    const newTodo = new TestTodo();
+    newTodo.todo = 'request 에서 받아온 데이터'; // todo 저장 (사용자가 http 로 요청한 데이터를 넣는다)
+    this.sampleService
+      .findUser('1') // 유저 엔티티를 가져옴
+      .then((user) => {
+        newTodo.user = user; // todo 의 user 에는 조회한 user 를 세팅
+        user.todos.push(newTodo); // 유저의 todos 에는 새로 만든 todo 를 push
+      });
+    this.sampleService.saveOne(newTodo);
   }
 }
