@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { TestTodo } from './sample-todo.entity';
+import { TestTodo } from './sampletodo.entity';
 
 // Class 이름 = 테이블 이름
 @Entity()

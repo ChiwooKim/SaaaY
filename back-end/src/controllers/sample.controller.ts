@@ -10,8 +10,8 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { TestTodo } from 'src/entity/sample-todo.entity';
-import { TestUser } from 'src/entity/sample-user.entity';
+import { TestTodo } from 'src/entity/sampletodo.entity';
+import { TestUser } from 'src/entity/sampleuser.entity';
 import { TodoDto } from 'src/models/todo.dto';
 
 import { SampleService } from '../services/sample.service';
