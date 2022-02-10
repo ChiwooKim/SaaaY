@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
+import { TestPhoto } from 'src/entity/samplephoto.entity';
+import { TestPhotoMetadata } from 'src/entity/samplephotometadata.entity';
 import { TestTodo } from 'src/entity/sampletodo.entity';
 import { TestUser } from 'src/entity/sampleuser.entity';
+import { Photo } from 'src/models/photo.dto';
 import { Connection, Repository } from 'typeorm';
 
 import { TodoDto } from '../models/todo.dto';
@@ -17,11 +20,58 @@ export class SampleService {
     private readonly todoRepository: Repository<TestTodo>,
     @InjectRepository(TestUser)
     private readonly userRepository: Repository<TestUser>,
+    @InjectRepository(TestPhoto)
+    private readonly photoRepository: Repository<TestPhoto>,
+    @InjectRepository(TestPhotoMetadata)
+    private readonly metaRepository: Repository<TestPhotoMetadata>,
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
   public async findAllWithRawQuery() {
     return this.connection.query('SELECT * FROM test_user');
+  }
+
+  public async createSamplePhoto() {
+    const photo = new Photo();
+    photo.name = 'Me and Bears';
+    photo.description = 'I am near polar bears';
+    photo.filename = 'photo-with-bears.jpg';
+    photo.views = 1;
+    photo.isPublished = true;
+
+    return this.photoRepository.save(photo);
+  }
+
+  public async getAllPhotos(): Promise<Photo[]> {
+    return this.photoRepository.find();
+  }
+
+  public async createPhotoMetadata(photoId: string) {
+    const photo = await this.photoRepository.findOne(photoId);
+    const metadata = new TestPhotoMetadata();
+    metadata.height = 640;
+    metadata.width = 480;
+    metadata.compressed = true;
+    metadata.comment = 'cybershoot';
+    metadata.orientation = 'portrait';
+    metadata.photo = photo;
+
+    // await this.photoRepository.save(photo);
+    await this.metaRepository.save(metadata);
+  }
+
+  public async getPhotoWithMetadata() {
+    const photo = await this.photoRepository.find({
+      relations: ['metadata'],
+    });
+    console.log(photo);
+    const one = await this.photoRepository.findOne({
+      relations: ['metadata'],
+      where: {
+        id: 1,
+      },
+    });
+    console.log(one);
   }
 
   /**

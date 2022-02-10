@@ -9,8 +9,4 @@ export class Role {
 
   @Column()
   roleName: string;
-
-  // 다대일 양방향 매핑 (user <-> todo)
-  @ManyToOne(() => User, (user) => user.role)
-  user: User;
 }

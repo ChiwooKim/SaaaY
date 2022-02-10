@@ -127,4 +127,31 @@ export class SampleController {
       res.status(HttpStatus.OK).send();
     });
   }
+
+  @Post('/photo')
+  createSamplePhoto(@Res() res: Response) {
+    this.sampleService.createSamplePhoto().then(() => {
+      res.status(HttpStatus.OK).send();
+    });
+  }
+
+  @Get('photo')
+  getAllPhotos(@Res() res: Response) {
+    this.sampleService.getAllPhotos().then((photos) => {
+      res.status(HttpStatus.OK).json(photos);
+    });
+  }
+
+  @Post('/photo/:photoId/meta')
+  createPhotoMetadata(@Param('photoId') photoId, @Res() res: Response) {
+    this.sampleService.createPhotoMetadata(photoId).then(() => {
+      res.status(HttpStatus.OK).send();
+    });
+  }
+
+  @Get('photos')
+  async get(@Res() res: Response) {
+    await this.sampleService.getPhotoWithMetadata();
+    res.status(HttpStatus.OK).send();
+  }
 }

@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Role } from './role.entity';
 
 // Class 이름 = 테이블 이름
@@ -25,6 +31,7 @@ export class User {
   @Column()
   biography: string;
 
-  @ManyToOne(() => Role, (role) => role.user)
+  // 다대일 단방향 매핑
+  @ManyToOne(() => Role)
   role: Role;
 }

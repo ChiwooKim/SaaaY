@@ -15,11 +15,16 @@ import { Oauth } from './entity/oauth.entity';
 import { Role } from './entity/role.entity';
 import { AccountController } from './controllers/account.controller';
 import { AccountService } from './services/account.service';
+import { UserCustomRepository as UserCustomRepository } from './repositories/user.custom.repository';
+import { TestPhoto } from './entity/samplephoto.entity';
+import { TestPhotoMetadata } from './entity/samplephotometadata.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
     TypeOrmModule.forFeature([TestUser]),
     TypeOrmModule.forFeature([TestTodo]),
+    TypeOrmModule.forFeature([TestPhoto]),
+    TypeOrmModule.forFeature([TestPhotoMetadata]),
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([Oauth]),
     TypeOrmModule.forFeature([Role]),
@@ -37,6 +42,7 @@ import { AccountService } from './services/account.service';
     RoomService,
     AccountService,
     UserService,
+    UserCustomRepository,
   ],
 })
 export class AppModule {}
