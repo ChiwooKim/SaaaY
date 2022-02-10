@@ -19,7 +19,14 @@ import FullCalendar, {
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { createEventId } from '../event-utils';
+import listPlugin from '@fullcalendar/list';
+
+// 일정 생성
+let eventGuid = 0;
+// eslint-disable-next-line prefer-const
+function createEventId() {
+  return String(eventGuid++);
+}
 
 const Calendar = defineComponent({
   components: {
@@ -32,34 +39,29 @@ const Calendar = defineComponent({
           dayGridPlugin,
           timeGridPlugin,
           interactionPlugin, // needed for dateClick
+          listPlugin,
         ],
         headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+          left: 'prev,next today', // 이전, 다음, 오늘로 이동하는 버튼
+          center: 'title', // 월-연도 표시
+          right: 'dayGridMonth,timeGridDay,listWeek', // 월, 주, 일 frame
         },
-        initialView: 'dayGridMonth',
-        editable: true,
-        selectable: true,
-        selectMirror: true,
-        dayMaxEvents: true,
-        weekends: true,
-        select: this.handleDateSelect,
-        eventClick: this.handleEventClick,
-        eventsSet: this.handleEvents,
-        /* you can update a remote database when these fire:
-        eventAdd:
-        eventChange:
-        eventRemove:
-        */
+        initialView: 'dayGridMonth', // 첫 화면 default 값이 오늘 날짜
+        expandRows: true,
+        editable: true, // 수정(day에서 drag로 시간 늘이고 줄이기 가능)
+        selectable: true, // select한 일자 drag 가능
+        dayMaxEvents: true, // event 갯수가 많아서 칸 초과했을 때 +개수로 표기
+        nowIndicator: true, // 현재 시간 마크
+        locale: 'ko', // 한국어 설정
+        navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
+        select: this.handleDateSelect, // 날짜 선택 후 event 등록
+        eventClick: this.handleEventClick, // 등록된 event 클릭 했을때 event(현재 delete)
+        eventsSet: this.handleEvents, // event가 등록되거나 변경 되었을 때
       } as CalendarOptions,
       currentEvents: [] as EventApi[],
     };
   },
   methods: {
-    handleWeekendsToggle() {
-      this.calendarOptions.weekends = !this.calendarOptions.weekends; // update a property
-    },
     handleDateSelect(selectInfo: DateSelectArg) {
       let title = prompt('Please enter a new title for your event');
       let calendarApi = selectInfo.view.calendar;
@@ -76,6 +78,7 @@ const Calendar = defineComponent({
         });
       }
     },
+
     handleEventClick(clickInfo: EventClickArg) {
       if (
         confirm(
@@ -95,26 +98,6 @@ export default Calendar;
 </script>
 
 <style lang="css">
-h2 {
-  margin: 0;
-  font-size: 16px;
-}
-
-ul {
-  margin: 0;
-  padding: 0 0 0 1.5em;
-}
-
-li {
-  margin: 1.5em 0;
-  padding: 0;
-}
-
-b {
-  /* used for event dates/times */
-  margin-right: 3px;
-}
-
 .app {
   display: flex;
   min-height: 100%;
