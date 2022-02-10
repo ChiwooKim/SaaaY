@@ -10,11 +10,6 @@ export class AppController {
     private readonly sampleService: SampleService,
   ) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   @Get('/sample')
   getSample(): TodoDto[] {
     return this.sampleService.getTodos();

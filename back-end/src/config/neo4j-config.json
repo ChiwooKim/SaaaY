@@ -1,0 +1,5 @@
+{
+  "uri": "neo4j://i6b203.p.ssafy.io:7687",
+  "user": "neo4j",
+  "password": "ssafy"
+}
