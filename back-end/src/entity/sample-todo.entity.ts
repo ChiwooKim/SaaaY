@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { TestUser } from './user.entity';
+import { TestUser } from './sample-user.entity';
 
 // Class 이름 = 테이블 이름
 @Entity()

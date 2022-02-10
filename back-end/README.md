@@ -86,3 +86,7 @@ Nest is [MIT licensed](LICENSE).
 ```bash
 yarn typeorm schema:sync
 ```
+
+## Swagger-UI
+
+http://localhost:3000/api/

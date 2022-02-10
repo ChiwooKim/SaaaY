@@ -1,4 +1,4 @@
-export class MemberDto {
+export class UserDto {
   public email: string;
   public username: string;
   public password: string;
@@ -6,17 +6,17 @@ export class MemberDto {
   public biography: string;
   public role: string;
 
-  constructor(member: {
+  constructor(user: {
     email: string;
     username: string;
     grade: string;
     biography: string;
     role: string;
   }) {
-    this.email = member.email;
-    this.username = member.username;
-    this.grade = member.grade;
-    this.biography = member.biography;
-    this.role = member.role;
+    this.email = user.email;
+    this.username = user.username;
+    this.grade = user.grade;
+    this.biography = user.biography;
+    this.role = user.role;
   }
 }

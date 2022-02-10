@@ -1,7 +1,7 @@
 import { TodoDto } from '../models/todo.dto';
 import mariadb from 'mariadb';
 import mariadb_config from '../config/mariadb-config.json';
-import { TestTodo } from 'src/entity/todo.entity';
+import { TestTodo } from 'src/entity/sample-todo.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { pool } from './connection-pools/maria.db';
 

@@ -10,20 +10,20 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { MemberService } from 'src/services/member.service';
+import { UserService } from 'src/services/user.service';
 
 // TODO : https://docs.nestjs.com/controllers https://wikidocs.net/148192
 
-@Controller('/member')
-export class MemberController {
-  constructor(private readonly memberService: MemberService) {}
+@Controller('/user')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
-  @Get('/:memberId')
-  getMember(@Param('memberId') memberId: string, @Res() res: Response) {
+  @Get('/:userId')
+  getUser(@Param('userId') userId: string, @Res() res: Response) {
     res.status(HttpStatus.OK);
 
-    this.memberService
-      .findMember('1')
+    this.userService
+      .findUser('1')
       .then((m) => {
         res.status(HttpStatus.OK).json(m);
       })

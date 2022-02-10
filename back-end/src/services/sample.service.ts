@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection, InjectRepository } from '@nestjs/typeorm';
-import { TestTodo } from 'src/entity/todo.entity';
-import { TestUser } from 'src/entity/user.entity';
+import { TestTodo } from 'src/entity/sample-todo.entity';
+import { TestUser } from 'src/entity/sample-user.entity';
 import { Connection, Repository } from 'typeorm';
 
 import { TodoDto } from '../models/todo.dto';

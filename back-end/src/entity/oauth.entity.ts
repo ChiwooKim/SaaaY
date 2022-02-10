@@ -5,7 +5,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { Member } from './member.entity';
+import { User } from './user.entity';
 
 // Class 이름 = 테이블 이름
 @Entity()
@@ -25,8 +25,8 @@ export class Oauth {
   @Column()
   provider: string;
 
-  // 일대일 단방향 매핑 (member <-> oauth), oauth 쪽에만 데이터
-  @OneToOne(() => Member)
+  // 일대일 단방향 매핑 (user <-> oauth), oauth 쪽에만 데이터
+  @OneToOne(() => User)
   @JoinColumn()
-  member: Member;
+  user: User;
 }
