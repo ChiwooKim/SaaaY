@@ -38,7 +38,7 @@ export class UserController {
   getUserByName(@Param('userName') userName: string, @Res() res: Response) {
     console.log('find user :', userName);
     this.userService
-      .findUserByName(userName)
+      .findUserByUsername(userName)
       .then((userDto) => {
         res.status(HttpStatus.OK).json(userDto).send();
       })
@@ -46,5 +46,13 @@ export class UserController {
         console.log(err);
         res.status(HttpStatus.BAD_GATEWAY).send();
       });
+  }
+
+  @Post()
+  async signin(@Body() userDto: UserDto, @Res() res: Response) {
+    console.log('create user :', userDto);
+    const newUser = await this.userService.createUser(userDto);
+    newUser.password = undefined;
+    res.status(HttpStatus.CREATED).json(newUser).send();
   }
 }

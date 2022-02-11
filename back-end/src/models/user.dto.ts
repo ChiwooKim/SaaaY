@@ -7,13 +7,13 @@ export class UserDto {
   public password: string;
   public grade: string;
   public biography: string;
-  public role: Role;
+  public role: string;
 
   constructor(user: User) {
     this.email = user.email;
     this.username = user.username;
     this.grade = user.grade;
     this.biography = user.biography;
-    this.role = user.role;
+    this.role = user.role.roleName;
   }
 }
