@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpStatus,
   Param,
   Patch,
@@ -12,10 +13,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { access } from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
-import { AuthenticationError } from 'src/error/authentication.error';
 import { ResourceError } from 'src/error/resource.error';
 import { UserDto } from 'src/models/user.dto';
 import { UserService } from 'src/services/user.service';
@@ -100,5 +101,13 @@ export class UserController {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  @Get('sample/verify')
+  async verify(@Headers('Authorization') accessToken, @Res() res: Response) {
+    console.log(accessToken);
+    const user = await this.authService.verifyUser(accessToken);
+    console.log(user.email);
+    res.send();
   }
 }

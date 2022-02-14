@@ -21,7 +21,7 @@
     "@types/calendar": "^0.1.2",
     "@types/gsap": "^3.0.0",
     "@types/scrollmagic": "^2.0.2",
-    "axios": "^0.21.1",
+    "axios": "^0.26.0",
     "core-js": "^3.6.5",
     "gsap": "^3.9.1",
     "lodash": "^4.17.21",

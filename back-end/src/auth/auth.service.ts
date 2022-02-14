@@ -24,4 +24,9 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async verifyUser(accessToken: string): Promise<any> {
+    const jwt = accessToken.replace('Bearer ', '');
+    return this.jwtService.verify(jwt);
+  }
 }
