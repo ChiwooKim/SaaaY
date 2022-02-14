@@ -30,7 +30,7 @@
     "swiper": "^8.0.3",
     "vue": "^3.0.0",
     "vue-awesome-swiper": "^4.1.1",
-    "vue-router": "^4.0.0",
+    "vue-router": "4",
     "vuex": "^4.0.1"
   },
   "devDependencies": {
