@@ -1,0 +1,39 @@
+// app global css in Sass form
+
+/* COMMON */
+body {
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #333;
+}
+a {
+  text-decoration: none;
+}
+
+img {
+  /* img(인라인 요소) 하단에 Baseline 공백을 제거 */
+  display: block;
+}
+
+/*BUTTON*/
+.btn {
+  width: 9vw;
+  padding: 10px 3px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: block;
+  transition: 0.4s;
+}
+
+.btn:hover {
+  background-color: #fff;
+  color: #333;
+}
