@@ -2,6 +2,25 @@
   <div class="q-pa-md">
     <div class="row">
       <div class="col-8 offset-2">
+        <div v-for="(own, index) in owner" :key="`onwer-${index}`">
+          <div class="row justify-center">
+            <div class="col-1">
+              <img
+                src="images/blank-profile-picture.png"
+                alt="profile-image"
+                class="profile q-mb-sm"
+              />
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <div class="offset-1 text-bold">
+              {{ own._fields[0].properties.username }}
+            </div>
+          </div>
+          <div class="flex justify-center text-grey q-mb-md">
+            <div class="offset-1">@{{ own._fields[0].properties.email }}</div>
+          </div>
+        </div>
         <q-card>
           <q-tabs
             v-model="tab"
@@ -14,58 +33,197 @@
           >
             <q-tab name="followers" label="Followers" />
             <q-tab name="following" label="Following" />
+            <!-- TODO: 로그인한 유저로 변경 -->
+            <q-tab name="blocklist" label="BlockList" v-if="targetId == '4'" />
           </q-tabs>
 
           <q-separator />
 
           <q-tab-panels v-model="tab" animated>
             <q-tab-panel name="followers">
-              <div class="row">
-                <div class="col-1 row">
-                  <div class="col-8 offset-2">
-                    <img
-                      src="images/blank-profile-picture.png"
-                      alt="profile-image"
-                      class="profile"
+              <div
+                v-for="(follower, index) in followers"
+                :key="`follower-${index}`"
+              >
+                <div class="row">
+                  <div class="col-1 row">
+                    <div class="col-8 offset-2">
+                      <img
+                        src="images/blank-profile-picture.png"
+                        alt="profile-image"
+                        class="profile q-mb-sm"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-9 q-pl-lg row">
+                    <div class="col-12 row flex items-end">
+                      <div
+                        class="text-h5 name"
+                        @click="newFollowers(follower._fields[0].identity.low)"
+                      >
+                        {{ follower._fields[0].properties.username }}
+                      </div>
+                      <div
+                        class="q-ml-lg"
+                        v-if="
+                          myFollower.includes(follower._fields[0].identity.low)
+                        "
+                      >
+                        Follows You
+                      </div>
+                    </div>
+                    <p>
+                      {{ follower._fields[0].properties.biography }}
+                    </p>
+                  </div>
+                  <div class="col-2 flex flex-center">
+                    <!-- TODO: 로그인한 유저로 변경 -->
+                    <q-btn
+                      v-if="
+                        myFollowing.includes(
+                          follower._fields[0].identity.low
+                        ) && follower._fields[0].identity.low != '4'
+                      "
+                      @click="
+                        deleteMyFollowingList(follower._fields[0].identity.low)
+                      "
+                      outline
+                      rounded
+                      color="primary"
+                      label="FOLLOWING"
+                    />
+                    <q-btn
+                      v-else-if="
+                        !myFollowing.includes(
+                          follower._fields[0].identity.low
+                        ) && follower._fields[0].identity.low != '4'
+                      "
+                      @click="
+                        addMyFollowingList(follower._fields[0].identity.low)
+                      "
+                      unelevated
+                      rounded
+                      color="primary"
+                      label="FOLLOW"
                     />
                   </div>
-                </div>
-                <div class="col-9 q-pl-lg row">
-                  <div class="col-12 row flex items-end">
-                    <div class="text-h5">Name</div>
-                    <div class="q-ml-lg">Follows You</div>
-                  </div>
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  </p>
-                </div>
-                <div class="col-2 flex flex-center">
-                  <q-btn unelevated rounded color="primary" label="FOLLOW" />
                 </div>
               </div>
             </q-tab-panel>
 
             <q-tab-panel name="following">
-              <div class="row">
-                <div class="col-1 row">
-                  <div class="col-8 offset-2">
-                    <img
-                      src="images/blank-profile-picture.png"
-                      alt="profile-image"
-                      class="profile"
+              <div
+                v-for="(following, index) in followings"
+                :key="`following-${index}`"
+              >
+                <div class="row">
+                  <div class="col-1 row">
+                    <div class="col-8 offset-2">
+                      <img
+                        src="images/blank-profile-picture.png"
+                        alt="profile-image"
+                        class="profile q-mb-sm"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-9 q-pl-lg row">
+                    <div class="col-12 row flex items-end">
+                      <div
+                        class="text-h5 name"
+                        @click="
+                          newFollowings(following._fields[0].identity.low)
+                        "
+                      >
+                        {{ following._fields[0].properties.username }}
+                      </div>
+                      <div
+                        class="q-ml-lg"
+                        v-if="
+                          myFollower.includes(following._fields[0].identity.low)
+                        "
+                      >
+                        Follows You
+                      </div>
+                    </div>
+                    <p>
+                      {{ following._fields[0].properties.biography }}
+                    </p>
+                  </div>
+                  <div class="col-2 flex flex-center">
+                    <!-- TODO: 로그인한 유저로 변경 -->
+                    <q-btn
+                      v-if="
+                        myFollowing.includes(
+                          following._fields[0].identity.low
+                        ) && following._fields[0].identity.low != '4'
+                      "
+                      @click="
+                        deleteMyFollowingList(following._fields[0].identity.low)
+                      "
+                      outline
+                      rounded
+                      color="primary"
+                      label="FOLLOWING"
+                    />
+                    <q-btn
+                      v-else-if="
+                        !myFollowing.includes(
+                          following._fields[0].identity.low
+                        ) && following._fields[0].identity.low != '4'
+                      "
+                      @click="
+                        addMyFollowingList(following._fields[0].identity.low)
+                      "
+                      unelevated
+                      rounded
+                      color="primary"
+                      label="FOLLOW"
                     />
                   </div>
                 </div>
-                <div class="col-9 q-pl-lg row">
-                  <div class="col-12 row flex items-end">
-                    <div class="text-h5">Name</div>
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="blocklist">
+              <div v-for="(block, index) in blockList" :key="`block-${index}`">
+                <div class="row">
+                  <div class="col-1 row">
+                    <div class="col-8 offset-2">
+                      <img
+                        src="images/blank-profile-picture.png"
+                        alt="profile-image"
+                        class="profile q-mb-sm"
+                      />
+                    </div>
                   </div>
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  </p>
-                </div>
-                <div class="col-2 flex flex-center">
-                  <q-btn outline rounded color="primary" label="FOLLOWING" />
+                  <div class="col-9 q-pl-lg row">
+                    <div class="col-12 row flex items-end">
+                      <div class="text-h5">
+                        {{ block._fields[0].properties.username }}
+                      </div>
+                    </div>
+                    <p>
+                      {{ block._fields[0].properties.biography }}
+                    </p>
+                  </div>
+                  <div class="col-2 flex flex-center">
+                    <q-btn
+                      v-if="blockListId.includes(block._fields[0].identity.low)"
+                      @click="deleteMyBlockList(block._fields[0].identity.low)"
+                      unelevated
+                      rounded
+                      color="red"
+                      label="BLOCKED"
+                    />
+                    <q-btn
+                      v-else
+                      @click="addMyBlockList(block)"
+                      outline
+                      rounded
+                      color="red"
+                      label="BLOCK"
+                    />
+                  </div>
                 </div>
               </div>
             </q-tab-panel>
@@ -76,13 +234,113 @@
   </div>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script lang="ts">
+import { computed, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'src/store';
 
 export default {
   setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const $store = useStore();
+    // let targetId = route.params.targetId;
+    // TODO: 로그인한 유저로 변경
+    const myId = '4';
+
+    $store.dispatch('account/myFollower', myId).catch(console.log);
+    $store.dispatch('account/myFollowing', myId).catch(console.log);
+    $store
+      .dispatch('account/getOwner', route.params.targetId)
+      .catch(console.log);
+    $store
+      .dispatch('account/getFollowerList', route.params.targetId)
+      .catch(console.log);
+    $store
+      .dispatch('account/getFollowingList', route.params.targetId)
+      .catch(console.log);
+    $store
+      .dispatch('account/getBlockList', route.params.targetId)
+      .catch(console.log);
+
+    // onUpdated(() => {
+    //   // targetId = route.params.targetId;
+    //   // $store
+    //   //   .dispatch('account/getOwner', route.params.targetId)
+    //   //   .catch(console.log);
+    //   $store
+    //     .dispatch('account/getFollowerList', route.params.targetId)
+    //     .catch(console.log);
+    //   $store
+    //     .dispatch('account/getFollowingList', route.params.targetId)
+    //     .catch(console.log);
+    //   $store
+    //     .dispatch('account/getBlockList', route.params.targetId)
+    //     .catch(console.log);
+    //   // console.log('aa');
+    // });
+
+    const addMyFollowingList = (targetId: string) =>
+      $store.dispatch('account/addMyFollowingList', targetId);
+
+    const deleteMyFollowingList = (targetId: string) =>
+      $store.dispatch('account/deleteMyFollowingList', targetId);
+
+    const addMyBlockList = (target) =>
+      $store.dispatch('account/addMyBlockList', target);
+
+    const deleteMyBlockList = (targetId: string) =>
+      $store.dispatch('account/deleteMyBlockList', targetId);
+
+    const newFollowers = async (newId: string) => {
+      await router.push(`${newId}`);
+    };
+
+    const newFollowings = async (newId: string) => {
+      await router.push(`${newId}`);
+    };
+
+    // onUpdated(() => router.go(0));
+    const owner = computed(() => $store.state.account.owner);
+    const targetId = computed(() => route.params.targetId);
+    const myFollower = computed(() => $store.state.account.myFollower);
+    const myFollowing = computed(() => $store.state.account.myFollowing);
+    const followers = computed(() => $store.state.account.followers);
+    const followings = computed(() => $store.state.account.followings);
+    const blockList = computed(() => $store.state.account.blockList);
+    const blockListId = computed(() => $store.state.account.blockListId);
+
+    watch(targetId, () => {
+      $store
+        .dispatch('account/getOwner', route.params.targetId)
+        .catch(console.log);
+      $store
+        .dispatch('account/getFollowerList', route.params.targetId)
+        .catch(console.log);
+      $store
+        .dispatch('account/getFollowingList', route.params.targetId)
+        .catch(console.log);
+      $store
+        .dispatch('account/getBlockList', route.params.targetId)
+        .catch(console.log);
+    });
+
     return {
       tab: ref('followers'),
+      owner,
+      targetId,
+      myFollower,
+      myFollowing,
+      followers,
+      followings,
+      blockList,
+      blockListId,
+      addMyFollowingList,
+      deleteMyFollowingList,
+      addMyBlockList,
+      deleteMyBlockList,
+      newFollowers,
+      newFollowings,
     };
   },
 };
@@ -94,5 +352,9 @@ export default {
   width: 100%;
   height: auto;
   overflow: hidden;
+}
+
+.name {
+  cursor: pointer;
 }
 </style>

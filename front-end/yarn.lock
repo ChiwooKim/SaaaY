@@ -1028,12 +1028,12 @@
     tslib "^2.1.0"
 
 "@fullcalendar/list@^5.10.1":
-  "integrity" "sha512-sB+AzM9P1nzGIzwVFNN8Zbocg5lkVQftyuJAZtULgu9o9e1rH/Aqsxt9Itf00N3WmMOh8H1LlnRpZF5kGu/j2w=="
-  "resolved" "https://registry.npmjs.org/@fullcalendar/list/-/list-5.10.1.tgz"
-  "version" "5.10.1"
+  version "5.10.1"
+  resolved "https://registry.npmjs.org/@fullcalendar/list/-/list-5.10.1.tgz"
+  integrity sha512-sB+AzM9P1nzGIzwVFNN8Zbocg5lkVQftyuJAZtULgu9o9e1rH/Aqsxt9Itf00N3WmMOh8H1LlnRpZF5kGu/j2w==
   dependencies:
     "@fullcalendar/common" "~5.10.1"
-    "tslib" "^2.1.0"
+    tslib "^2.1.0"
 
 "@fullcalendar/timegrid@^5.10.1":
   version "5.10.1"
@@ -1216,21 +1216,6 @@
   resolved "https://registry.npmjs.org/@quasar/fastclick/-/fastclick-1.1.4.tgz"
   integrity sha512-i9wbyV4iT+v4KhtHJynUFhH5LiEPvAEgSnwMqPN4hf/8uRe82nDl5qP5agrp2el1h0HzyBpbvHaW7NB0BPrtvA==
 
-<<<<<<< HEAD
-=======
-"@quasar/quasar-app-extension-qcalendar@^4.0.0-beta.12":
-  version "4.0.0-beta.12"
-  resolved "https://registry.npmjs.org/@quasar/quasar-app-extension-qcalendar/-/quasar-app-extension-qcalendar-4.0.0-beta.12.tgz"
-  integrity sha512-YRnKdlXWZSdEmiVMiukknTZrDVpcpm3NJT5SSpfe/NUfVrAPBCEOWwV89p8GguKxRIFVoU8RVOXNp6XahZ2OZg==
-  dependencies:
-    "@quasar/quasar-ui-qcalendar" "^4.0.0-beta.12"
-
-"@quasar/quasar-ui-qcalendar@^4.0.0-beta.12":
-  version "4.0.0-beta.12"
-  resolved "https://registry.npmjs.org/@quasar/quasar-ui-qcalendar/-/quasar-ui-qcalendar-4.0.0-beta.12.tgz"
-  integrity sha512-Sh/IEAkPnuDTyPexQMDKCVhlpwGKNdI2b8WUjPxtF0aHmeyR3anXyxqkJQGMEd37zmi9zEyR1ah2UPOD9e2VMA==
-
->>>>>>> upstream/feature
 "@quasar/ssr-helpers@2.1.1":
   version "2.1.1"
   resolved "https://registry.npmjs.org/@quasar/ssr-helpers/-/ssr-helpers-2.1.1.tgz"

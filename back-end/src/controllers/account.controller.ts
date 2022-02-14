@@ -16,12 +16,24 @@ import { AccountService } from '../services/account.service';
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
+  @Get(':targetId/owner')
+  async getOwner(@Param('targetId') targetId: string, @Res() res: Response) {
+    const owner = await this.accountService.getOwner(targetId);
+    res.status(HttpStatus.OK).json(owner);
+  }
+
   @Get(':targetId/follower')
   async getFollowerList(
     @Param('targetId') targetId: string,
     @Res() res: Response,
   ) {
     const followerList = await this.accountService.getFollowerList(targetId);
+    res.status(HttpStatus.OK).json(followerList);
+  }
+
+  @Get(':myId/my-follower')
+  async myFollower(@Param('myId') myId: string, @Res() res: Response) {
+    const followerList = await this.accountService.myFollower(myId);
     res.status(HttpStatus.OK).json(followerList);
   }
 
@@ -32,6 +44,12 @@ export class AccountController {
   ) {
     const followerList = await this.accountService.getFollowingList(targetId);
     res.status(HttpStatus.OK).json(followerList);
+  }
+
+  @Get(':myId/my-following')
+  async myFollowing(@Param('myId') myId: string, @Res() res: Response) {
+    const followingList = await this.accountService.myFollowing(myId);
+    res.status(HttpStatus.OK).json(followingList);
   }
 
   @Post(':targetId/follow')
@@ -95,5 +113,14 @@ export class AccountController {
     } else {
       throw new BadRequestException('블락 리스트에 없는 유저입니다.');
     }
+  }
+
+  @Get(':targetId/blocklist')
+  async getBlockList(
+    @Param('targetId') targetId: string,
+    @Res() res: Response,
+  ) {
+    const blockList = await this.accountService.getBlockList(targetId);
+    res.status(HttpStatus.OK).json(blockList);
   }
 }
