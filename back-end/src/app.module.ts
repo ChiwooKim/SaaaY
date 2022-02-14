@@ -20,6 +20,8 @@ import { ScheduleController } from './controllers/schedule.controller';
 import { TestPhoto } from './entity/samplephoto.entity';
 import { TestPhotoMetadata } from './entity/samplephotometadata.entity';
 import { UserRepository } from './repositories/user.repository';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
@@ -30,6 +32,8 @@ import { UserRepository } from './repositories/user.repository';
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([Oauth]),
     TypeOrmModule.forFeature([Role]),
+    AuthModule,
+    UsersModule,
   ],
   controllers: [
     AppController,

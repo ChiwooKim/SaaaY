@@ -9,11 +9,8 @@ export class UserDto {
   public biography: string;
   public role: string;
 
-  constructor(user: User) {
-    this.email = user.email;
-    this.username = user.username;
-    this.grade = user.grade;
-    this.biography = user.biography;
-    this.role = user.role.roleName;
+  constructor(email: string, password: string) {
+    this.email = email;
+    this.password = password;
   }
 }
