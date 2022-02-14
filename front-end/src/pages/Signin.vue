@@ -57,12 +57,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { ref } from 'vue';
-import { useQuasar } from 'quasar';
+import { Cookies, useQuasar } from 'quasar';
 import { api } from 'src/boot/axios';
+import { AxiosResponse } from 'axios';
 
 export default {
+  created() {
+    const value = Cookies.get('access_token');
+    if (value) {
+      
+    }
+  },
   setup() {
     const email = ref(null);
     const password = ref(null);
@@ -88,8 +95,10 @@ export default {
         };
         api
           .post('/user/login', user)
-          .then((accessTocken) => {
-            console.log(accessTocken.data);
+          .then((response: AxiosResponse<{ access_token: string }>) => {
+            Cookies.set('access_token', response.data.access_token, {
+              expires: '1d',
+            });
           })
           .catch(() => {
             $q.notify({
