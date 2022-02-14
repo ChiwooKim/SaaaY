@@ -10,6 +10,8 @@ import {
 // import { ExampleStateInterface } from './module-example/state';
 import account from './module-account';
 import { AccountStateInterface } from './module-account/state';
+import room from './module-room';
+import { RoomStateInterface } from './module-room/state';
 import signin from './module-signin';
 import { SigninStateInterface } from './module-signin/state';
 
@@ -28,6 +30,7 @@ export interface StateInterface {
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   example: unknown;
   account: AccountStateInterface;
+  room: RoomStateInterface;
   signin: SigninStateInterface;
 }
 
@@ -47,6 +50,7 @@ export default store(function (/* { ssrContext } */) {
     modules: {
       // example
       account,
+      room,
       signin,
     },
 

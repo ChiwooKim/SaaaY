@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { Room } from 'src/models/RoomModel';
 
 import { RoomService } from '../services/room.service';
 
@@ -21,21 +22,15 @@ export class RoomController {
   @Post()
   createRoom(
     @Body()
-    params: {
-      roomName: string;
-      category: string[];
-      moderator: string[];
-      notice: string;
-      participates: string[];
-    },
+    RoomDTO: Room,
     @Res() res: Response,
   ) {
     const room = this.roomService.createRoom(
-      params.roomName,
-      params.category,
-      params.moderator,
-      params.notice,
-      params.participates,
+      RoomDTO.roomName,
+      RoomDTO.category,
+      RoomDTO.moderator,
+      RoomDTO.notice,
+      RoomDTO.participates,
     );
     res.status(HttpStatus.CREATED).json({ message: 'RoomCreated', room: room });
   }
@@ -46,58 +41,35 @@ export class RoomController {
     res.status(HttpStatus.OK);
     const Rooms = this.roomService.getRooms();
     console.log('rooms : ', Rooms);
-    res.status(HttpStatus.OK).json(JSON.stringify(Rooms));
+    res.status(HttpStatus.OK).json(Rooms);
   }
-
-  // getRooms: RequestHandler = (req, res, next) => {
-  //   console.log('getRooms');
-  //   const rooms = roomService.getRooms();
-  //   // console.log(rooms);
-  //   res.json({ rooms: rooms });
-  // };
-
-  // getRoom: RequestHandler<{ id: string }> = (req, res, next) => {
-  //   console.log('getRoom');
-  //   const roomId = req.params.id;
-
-  //   const room = roomService.getRoom(roomId);
-
-  //   res.json({ room: room });
-  // };
 
   @Get('/:Id')
   getRoom(@Param('Id') Id: string, @Res() res: Response) {
     console.log('/getRoom');
     res.status(HttpStatus.OK);
     const Room = this.roomService.getRoom(Id);
-    res.status(HttpStatus.OK).json(JSON.stringify(Room));
+    res.status(HttpStatus.OK).json(Room);
   }
 
-  /*
-  export const updateRoom: RequestHandler<{ id: string }> = (req, res, next) => {
-    console.log("updateTodo");
-    const todoId = req.params.id;
-  
-    const updatedText = (req.body as { text: string }).text;
-  
-    console.log("id: ", todoId);
-  
-    const updatedTodo = roomService.updateRoom(todoId, updatedText);
-  
-    res.json({ message: "Updated!", updatedTodo: updatedTodo });
-  };
-  */
+  @Patch(':Id')
+  updateRoom(
+    @Param('Id') Id: string,
+    @Body()
+    params: {
+      roomName: string;
+      category: string[];
+      moderator: string[];
+      notice: string;
+      participates: string[];
+    },
+    @Res() res: Response,
+  ) {
+    console.log('updateRoom');
+    const room = this.roomService.updateRoom(Id, params);
 
-  /*
-  deleteRoom: RequestHandler<{ id: string }> = (req, res, next) => {
-    console.log('deleteTodo');
-    const todoId = req.params.id;
-
-    roomService.deleteRoom(todoId);
-
-    res.json({ message: 'Room deleted!' });
-  };
-  */
+    res.status(HttpStatus.OK).json({ message: room });
+  }
 
   @Delete('/:Id')
   deleteRoom(@Param('Id') Id: string, @Res() res: Response) {

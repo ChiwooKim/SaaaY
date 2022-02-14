@@ -39,6 +39,11 @@ const routes: RouteRecordRaw[] = [
     path: '/:catchAll(.*)*',
     component: () => import('pages/Error404.vue'),
   },
+  {
+    path: '/roomList',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [{ path: '', component: () => import('pages/roomList.vue') }],
+  },
 ];
 
 export default routes;
