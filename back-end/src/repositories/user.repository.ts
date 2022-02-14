@@ -28,7 +28,9 @@ export class UserRepository {
       `MATCH (user) WHERE user.email = '${email}' RETURN user`,
     );
     if (result.length == 0) throw new ResourceError('이메일 없음');
-    return result[0].get('user').properties;
+    const userDto: UserDto = result[0].get('user').properties;
+    userDto.id = result[0].get('user').identity.low;
+    return userDto;
   }
 
   async findByUsername(userName: string): Promise<UserDto[]> {

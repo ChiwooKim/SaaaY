@@ -6,15 +6,21 @@ import {
   HttpStatus,
   Param,
   Post,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
-
+import { Response, Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AccountService } from '../services/account.service';
+import { UserService } from 'src/services/user.service';
 
 @Controller('/accounts')
 export class AccountController {
-  constructor(private readonly accountService: AccountService) {}
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get(':targetId/owner')
   async getOwner(@Param('targetId') targetId: string, @Res() res: Response) {
@@ -53,13 +59,27 @@ export class AccountController {
   }
 
   @Post(':targetId/follow')
+  @UseGuards(JwtAuthGuard)
   async addMyFollowingList(
     @Param('targetId') targetId: string,
     @Res() res: Response,
+    @Req() request: Request,
   ) {
-    // 로그인 기능 연결 후 로그인한 유저 Id 로 변경
-    const myId = '4';
-    const result = await this.accountService.addMyFollowingList(targetId, myId);
+    let user;
+    for (const req of request.rawHeaders) {
+      if (req.includes('Bearer')) {
+        const payload = JSON.parse(
+          Buffer.from(req.split('.')[1], 'base64').toString(),
+        );
+        user = await this.userService.findUserByEmail(payload.email);
+        break;
+      }
+    }
+    console.log(user);
+    const result = await this.accountService.addMyFollowingList(
+      targetId,
+      user.id,
+    );
     if (result) {
       res.status(201).send();
     } else {
