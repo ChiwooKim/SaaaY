@@ -12,5 +12,6 @@ export interface Room {
   roomName: string;
   category: string[];
   moderator: string[];
+  participates: string[];
   notice: string;
 }
