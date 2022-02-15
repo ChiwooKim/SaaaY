@@ -24,7 +24,18 @@ interface block {
   ];
 }
 
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  biography: string;
+}
+
 const mutation: MutationTree<AccountStateInterface> = {
+  getUser(state: AccountStateInterface, data: User) {
+    state.user = data;
+  },
+
   getOwner(state: AccountStateInterface, data: follow[]) {
     // state.owner = data[0]._fields[0].properties.username;
     state.owner = data;
@@ -59,7 +70,9 @@ const mutation: MutationTree<AccountStateInterface> = {
       }
     }
 
-    state.myFollowing.push(targetId);
+    if (!state.myFollowing.includes(targetId)) {
+      state.myFollowing.push(targetId);
+    }
   },
 
   deleteMyFollowingList(state: AccountStateInterface, targetId: string) {
@@ -88,10 +101,11 @@ const mutation: MutationTree<AccountStateInterface> = {
     }
   },
 
-  addMyBlockList(state: AccountStateInterface, target: block) {
+  addMyBlockList(state: AccountStateInterface, targetId: string) {
     // state.blockList.push(target);
-
-    state.blockListId.push(target._fields[0].identity.low);
+    if (!state.blockListId.includes(targetId)) {
+      state.blockListId.push(targetId);
+    }
   },
 
   deleteMyBlockList(state: AccountStateInterface, targetId: string) {

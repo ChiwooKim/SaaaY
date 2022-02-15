@@ -21,8 +21,16 @@ interface block {
   ];
 }
 
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  biography: string;
+}
+
 export interface AccountStateInterface {
   prop: boolean;
+  user: User;
   owner: follow[];
   myFollower: string[];
   myFollowing: string[];
@@ -35,6 +43,7 @@ export interface AccountStateInterface {
 function state(): AccountStateInterface {
   return {
     prop: false,
+    user: { id: '', username: '', email: '', biography: '' },
     owner: [],
     myFollower: [],
     myFollowing: [],

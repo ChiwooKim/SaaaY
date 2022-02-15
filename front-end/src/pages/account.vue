@@ -33,8 +33,7 @@
           >
             <q-tab name="followers" label="Followers" />
             <q-tab name="following" label="Following" />
-            <!-- TODO: 로그인한 유저로 변경 -->
-            <q-tab name="blocklist" label="BlockList" v-if="targetId == '4'" />
+            <q-tab name="blocklist" label="BlockList" v-if="targetId == myId" />
           </q-tabs>
 
           <q-separator />
@@ -77,12 +76,13 @@
                     </p>
                   </div>
                   <div class="col-2 flex flex-center">
-                    <!-- TODO: 로그인한 유저로 변경 -->
                     <q-btn
                       v-if="
+                        myId &&
                         myFollowing.includes(
                           follower._fields[0].identity.low
-                        ) && follower._fields[0].identity.low != '4'
+                        ) &&
+                        follower._fields[0].identity.low != myId
                       "
                       @click="
                         deleteMyFollowingList(follower._fields[0].identity.low)
@@ -94,9 +94,11 @@
                     />
                     <q-btn
                       v-else-if="
+                        myId &&
                         !myFollowing.includes(
                           follower._fields[0].identity.low
-                        ) && follower._fields[0].identity.low != '4'
+                        ) &&
+                        follower._fields[0].identity.low != myId
                       "
                       @click="
                         addMyFollowingList(follower._fields[0].identity.low)
@@ -150,12 +152,13 @@
                     </p>
                   </div>
                   <div class="col-2 flex flex-center">
-                    <!-- TODO: 로그인한 유저로 변경 -->
                     <q-btn
                       v-if="
+                        myId &&
                         myFollowing.includes(
                           following._fields[0].identity.low
-                        ) && following._fields[0].identity.low != '4'
+                        ) &&
+                        following._fields[0].identity.low != myId
                       "
                       @click="
                         deleteMyFollowingList(following._fields[0].identity.low)
@@ -167,9 +170,11 @@
                     />
                     <q-btn
                       v-else-if="
+                        myId &&
                         !myFollowing.includes(
                           following._fields[0].identity.low
-                        ) && following._fields[0].identity.low != '4'
+                        ) &&
+                        following._fields[0].identity.low != myId
                       "
                       @click="
                         addMyFollowingList(following._fields[0].identity.low)
@@ -217,7 +222,7 @@
                     />
                     <q-btn
                       v-else
-                      @click="addMyBlockList(block)"
+                      @click="addMyBlockList(block._fields[0].identity.low)"
                       outline
                       rounded
                       color="red"
@@ -238,6 +243,7 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'src/store';
+import { Cookies } from 'quasar';
 
 export default {
   setup() {
@@ -245,11 +251,41 @@ export default {
     const router = useRouter();
     const $store = useStore();
     // let targetId = route.params.targetId;
-    // TODO: 로그인한 유저로 변경
-    const myId = '4';
+    const targetId = computed(() => route.params.targetId);
 
-    $store.dispatch('account/myFollower', myId).catch(console.log);
-    $store.dispatch('account/myFollowing', myId).catch(console.log);
+    let myId: string;
+    myId = '';
+    // let accessToken: string;
+    // accessToken = '';
+    // const cookies = document.cookie.split('; ');
+    // for (const cookie of cookies) {
+    //   const data = cookie.split('=');
+    //   if (data[0] === 'access_token') {
+    //     accessToken = data[1];
+    //   }
+    // }
+    const accessToken = Cookies.get('access_token');
+    if (accessToken) {
+      const base64Url = accessToken.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join('')
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const data: { id: string } = JSON.parse(jsonPayload);
+      myId = data.id;
+    }
+
+    if (myId) {
+      $store.dispatch('account/myFollower', myId).catch(console.log);
+      $store.dispatch('account/myFollowing', myId).catch(console.log);
+    }
     $store
       .dispatch('account/getOwner', route.params.targetId)
       .catch(console.log);
@@ -259,9 +295,15 @@ export default {
     $store
       .dispatch('account/getFollowingList', route.params.targetId)
       .catch(console.log);
-    $store
-      .dispatch('account/getBlockList', route.params.targetId)
-      .catch(console.log);
+
+    if (+targetId.value === +myId) {
+      $store
+        .dispatch('account/getBlockList', {
+          targetId: route.params.targetId,
+          accessToken,
+        })
+        .catch(console.log);
+    }
 
     // onUpdated(() => {
     //   // targetId = route.params.targetId;
@@ -281,16 +323,19 @@ export default {
     // });
 
     const addMyFollowingList = (targetId: string) =>
-      $store.dispatch('account/addMyFollowingList', targetId);
+      $store.dispatch('account/addMyFollowingList', { targetId, accessToken });
 
     const deleteMyFollowingList = (targetId: string) =>
-      $store.dispatch('account/deleteMyFollowingList', targetId);
+      $store.dispatch('account/deleteMyFollowingList', {
+        targetId,
+        accessToken,
+      });
 
-    const addMyBlockList = (target) =>
-      $store.dispatch('account/addMyBlockList', target);
+    const addMyBlockList = (targetId: string) =>
+      $store.dispatch('account/addMyBlockList', { targetId, accessToken });
 
     const deleteMyBlockList = (targetId: string) =>
-      $store.dispatch('account/deleteMyBlockList', targetId);
+      $store.dispatch('account/deleteMyBlockList', { targetId, accessToken });
 
     const newFollowers = async (newId: string) => {
       await router.push(`${newId}`);
@@ -302,7 +347,6 @@ export default {
 
     // onUpdated(() => router.go(0));
     const owner = computed(() => $store.state.account.owner);
-    const targetId = computed(() => route.params.targetId);
     const myFollower = computed(() => $store.state.account.myFollower);
     const myFollowing = computed(() => $store.state.account.myFollowing);
     const followers = computed(() => $store.state.account.followers);
@@ -320,14 +364,20 @@ export default {
       $store
         .dispatch('account/getFollowingList', route.params.targetId)
         .catch(console.log);
-      $store
-        .dispatch('account/getBlockList', route.params.targetId)
-        .catch(console.log);
+      if (+targetId.value === +myId) {
+        $store
+          .dispatch('account/getBlockList', {
+            targetId: route.params.targetId,
+            accessToken,
+          })
+          .catch(console.log);
+      }
     });
 
     return {
       tab: ref('followers'),
       owner,
+      myId,
       targetId,
       myFollower,
       myFollowing,

@@ -76,7 +76,8 @@ export class UserController {
   @Post('/login')
   async login(@Body() userDto: UserDto) {
     console.log('auth login :', userDto);
-    return this.authService.login(userDto);
+    const user = await this.userService.findUserByEmail(userDto.email);
+    return this.authService.login(user);
   }
 
   @Put('/profile')
