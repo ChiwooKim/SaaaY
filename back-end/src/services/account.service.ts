@@ -16,7 +16,8 @@ import {
 export class AccountService {
   public async getOwner(targetId: string) {
     const result = await getOwner(targetId);
-    for (const res of result) {
+    const el = result[Symbol.iterator]();
+    for (const res of el) {
       res._fields[0].properties['password'] = undefined;
       console.log(res._fields[0].properties);
     }
@@ -25,7 +26,8 @@ export class AccountService {
 
   public async getFollowerList(targetId: string) {
     const result = await getFollowerList(targetId);
-    for (const res of result) {
+    const el = result[Symbol.iterator]();
+    for (const res of el) {
       res._fields[0].properties['password'] = undefined;
       console.log(res._fields[0].properties);
     }
@@ -39,7 +41,8 @@ export class AccountService {
 
   public async getFollowingList(targetId: string) {
     const result = await getFollowingList(targetId);
-    for (const res of result) {
+    const el = result[Symbol.iterator]();
+    for (const res of el) {
       res._fields[0].properties['password'] = undefined;
       console.log(res._fields[0].properties);
     }
@@ -73,7 +76,8 @@ export class AccountService {
 
   public async getBlockList(targetId: string) {
     const result = await getBlockList(targetId);
-    for (const res of result) {
+    const el = result[Symbol.iterator]();
+    for (const res of el) {
       res._fields[0].properties['password'] = undefined;
       console.log(res._fields[0].properties);
     }
