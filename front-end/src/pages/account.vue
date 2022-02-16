@@ -323,7 +323,7 @@ export default {
     const $store = useStore();
     // let targetId = route.params.targetId;
     const targetId = computed(() => route.params.targetId);
-
+    $store.dispatch('')
     let myId;
     myId = "";
     // let accessToken: string;

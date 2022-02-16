@@ -18,7 +18,6 @@ const routes = [
         path: "/account/:targetId",
         component: () => import("pages/Account.vue"),
       },
-      { path: "/profile", component: () => import("src/pages/Profile.vue") },
     ],
   },
 
@@ -56,7 +55,7 @@ const routes = [
 
   {
     name: "Profile",
-    path: "/profile",
+    path: "/profile/:userId",
     component: () => import("layouts/PreviewLayout.vue"),
     children: [{ path: "", component: () => import("pages/Profile.vue") }],
   },

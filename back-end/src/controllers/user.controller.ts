@@ -146,4 +146,17 @@ export class UserController {
       res.status(HttpStatus.OK).json(user);
     }
   }
+
+  @Get('/id/:userId')
+  async getUser(@Param('userId') userId: string, @Res() res: Response) {
+    try {
+      const user = await this.userService.findUser(userId);
+      const userDto = await this.findByEmail(user.email);
+      userDto.id = user.id;
+      res.status(HttpStatus.OK).json(userDto);
+    } catch (err) {
+      res.status(HttpStatus.BAD_GATEWAY).send();
+      Logger.error(err);
+    }
+  }
 }
