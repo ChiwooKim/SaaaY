@@ -52,7 +52,11 @@ export function addMyFollowingList({ commit }, data) {
       },
     })
     .then(() => {
-      commit("addMyFollowingList", data.targetId);
+      commit("addMyFollowingList", {
+        targetId: data.targetId,
+        ownerId: data.ownerId,
+        myId: data.myId,
+      });
     });
 }
 
@@ -62,7 +66,11 @@ export function deleteMyFollowingList({ commit }, data) {
       headers: { Authorization: data.accessToken },
     })
     .then(() => {
-      commit("deleteMyFollowingList", data.targetId);
+      commit("deleteMyFollowingList", {
+        targetId: data.targetId,
+        ownerId: data.ownerId,
+        myId: data.myId,
+      });
     });
 }
 

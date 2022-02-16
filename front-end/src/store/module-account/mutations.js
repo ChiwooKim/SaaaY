@@ -19,46 +19,75 @@ export function myFollowing(state, data) {
 
 export function getFollowerList(state, data) {
   state.followers = data;
-  console.log(data);
+  state.ownerFollower = [];
+  for (const follower of state.followers) {
+    state.ownerFollower.push(follower._fields[0].identity.low);
+  }
 }
 
 export function getFollowingList(state, data) {
   state.followings = data;
+  state.ownerFollowing = [];
+  for (const following of state.followings) {
+    state.ownerFollowing.push(following._fields[0].identity.low);
+  }
 }
-export function addMyFollowingList(state, targetId) {
+
+export function addMyFollowingList(state, data) {
   for (const follower of state.followers) {
-    if (follower._fields[0].identity.low === targetId) {
+    if (follower._fields[0].identity.low === data.targetId) {
       follower._fields[0].properties.isFollowing = true;
     }
   }
 
   for (const following of state.followings) {
-    if (following._fields[0].identity.low === targetId) {
+    if (following._fields[0].identity.low === data.targetId) {
       following._fields[0].properties.isFollowing = true;
     }
   }
 
-  if (!state.myFollowing.includes(targetId)) {
-    state.myFollowing.push(targetId);
+  if (!state.myFollowing.includes(data.targetId)) {
+    state.myFollowing.push(data.targetId);
+  }
+
+  if (
+    (data.targetId === data.ownerId) &
+    !state.ownerFollower.includes(data.myId)
+  ) {
+    state.ownerFollower.push(data.myId);
+  }
+
+  if (data.myId === data.ownerId) {
+    state.ownerFollowing = state.myFollowing;
   }
 }
 
-export function deleteMyFollowingList(state, targetId) {
+export function deleteMyFollowingList(state, data) {
   for (const follower of state.followers) {
-    if (follower._fields[0].identity.low === targetId) {
+    if (follower._fields[0].identity.low === data.targetId) {
       follower._fields[0].properties.isFollowing = false;
     }
   }
 
   for (const following of state.followings) {
-    if (following._fields[0].identity.low === targetId) {
+    if (following._fields[0].identity.low === data.targetId) {
       following._fields[0].properties.isFollowing = false;
     }
   }
 
   state.myFollowing = state.myFollowing.filter((following) => {
-    return following !== targetId;
+    return following !== data.targetId;
   });
+
+  if (data.targetId === data.ownerId) {
+    state.ownerFollower = state.ownerFollower.filter((follower) => {
+      return follower !== data.myId;
+    });
+  }
+
+  if (data.myId === data.ownerId) {
+    state.ownerFollowing = state.myFollowing;
+  }
 }
 
 export function getBlockList(state, data) {
