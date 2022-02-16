@@ -126,12 +126,12 @@ export default {
       this.session.on("exception", ({ exception }) => {
         console.warn(exception);
       });
-
       // --- Connect to the session with a valid user token ---
 
       // 'getToken' method is simulating what your server-side should do.
       // 'token' parameter should be retrieved and returned by your own backend
       this.getToken(this.mySessionId).then((token) => {
+        console.log(token);
         this.session
           .connect(token, { clientData: this.myUserName })
           .then(() => {
@@ -218,6 +218,8 @@ export default {
     // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
     createSession(sessionId) {
       return new Promise((resolve, reject) => {
+        console.log(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`);
+
         axios
           .post(
             `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,

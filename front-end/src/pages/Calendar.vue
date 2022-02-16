@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import "@fullcalendar/core/vdom"; // solve problem with Vite
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -16,6 +16,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useStore } from "src/store";
 import { Cookies, useQuasar } from "quasar";
+import { api } from "src/boot/axios";
+import { store } from "quasar/wrappers";
 
 export default {
   components: {
@@ -73,12 +75,8 @@ export default {
               .dispatch("schedule/createEvent", create_data)
               .catch(console.log);
           })
-          .onCancel(() => {
-            // console.log('>>>> Cancel')
-          })
-          .onDismiss(() => {
-            // console.log('I am triggered on both OK and Cancel')
-          });
+          .onCancel(() => {})
+          .onDismiss(() => {});
       }
     };
 
