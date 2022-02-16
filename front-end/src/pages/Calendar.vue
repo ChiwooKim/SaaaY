@@ -16,7 +16,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useStore } from "src/store";
 import { Cookies, useQuasar } from "quasar";
-import { api } from "src/boot/axios";
 
 export default {
   components: {
@@ -28,27 +27,16 @@ export default {
     const accessToken = Cookies.get("access_token");
     // // 이미 등록되어있는 이벤트는 eventSet에 추가(created)
     $store.dispatch("schedule/getEvent").catch(console.log);
-    // let currentEvents = $store.state.schedule.events;
-
+    let all_events = computed(() => $store.state.schedule.events);
+    let currentEvents = [];
+    console.log("test", currentEvents);
     // eslint-disable-next-line vue/return-in-computed-property
-    const all_events = computed(() => {
-      return $store.state.schedule.events;
-    });
-    // // let all_events = [];
-    // // void api
-    // //   .get('/schedule', {
-    // //     headers: {
-    // //       Authorization: `Bearer ${accessToken}`,
-    // //     },
-    // //   })
-    // //   .then((response: AxiosResponse) => {
-    // //     console.log(response.data);
-    // //     const events = response.data as save_event[];
-    // //     all_events = events;
-    // //     console.log(all_events);
-    // //   });
+    // const all_events = computed(() => {
+    //   return $store.state.schedule.events;
+    // });
+    // console.log(all_events.value);
 
-    // // 일정 생성하기(임시저장)
+    // // 일정 생성하기
     const handleDateSelect = (arg) => {
       const now = new Date();
       if (arg.start <= now) {
@@ -77,7 +65,17 @@ export default {
               end: arg.end,
               allDay: arg.allDay,
             });
-            // console.log(arg);
+            // create
+            const create_data = {
+              id: "",
+              title: data,
+              start: arg.start,
+              end: arg.end,
+              allDay: arg.allDay,
+            };
+            $store
+              .dispatch("schedule/createEvent", create_data)
+              .catch(console.log);
           })
           .onCancel(() => {
             // console.log('>>>> Cancel')
@@ -97,66 +95,38 @@ export default {
         cancel: true,
         persistent: true,
       }).onOk(() => {
-        arg.event.remove();
-
         // backend를 통해 db에 있는 일정도 삭제
-        void $store.dispatch("schedule/deleteEvent", arg.event.id);
+        const delete_data = {
+          title: arg.event.title,
+          start: arg.event.start,
+          end: arg.event.end,
+          allDay: arg.event.allDay,
+        };
+        console.log(arg.event.title, arg.event.start);
+        $store.dispatch("schedule/deleteEvent", delete_data);
         arg.event.remove();
       });
     };
 
     // // 등록되었을 배열에 추가, 일정이 바뀐 events들 확인 후 backend에 data 전달하고 배열에서 제거
     const changeEvent = (events) => {
-      // console.log(events);
       currentEvents = events;
-      // console.log(currentEvents);
+      console.log("sss", typeof events);
       if (currentEvents.length > 0) {
-        // all-day가 아닌 경우 일정이 등록되었다는 뜻이므로 create보내기
         // all-day가 true인 경우 시간일정이 바뀌었다는 것이므로 update로 보내기
         for (let i = 0; i < currentEvents.length; i++) {
-          // console.log(currentEvents[i]);
-          if (currentEvents[i].allDay === false && currentEvents[i].id === "") {
-            // create
-            const create_data = {
-              id: "",
-              title: currentEvents[i].title,
-              start: currentEvents[i].start,
-              end: currentEvents[i].end,
-              allDay: currentEvents[i].allDay,
-            };
-            void api
-              .post("/schedule/create", create_data, {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              })
-              .then((response) => {
-                // events.push(response.data);
-                // console.log(currentEvents);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-            // console.log(currentEvents);
-          } else if (
-            currentEvents[i].allDay === false &&
-            currentEvents[i].start !== currentEvents[i].end
-          ) {
-            // update
-            const update_data = {
-              id: currentEvents[i].id,
-              title: currentEvents[i].title,
-              start: currentEvents[i].start,
-              end: currentEvents[i].end,
-              allDay: currentEvents[i].allDay,
-            };
-            // console.log(update_data);
-            void $store.dispatch("schedule/updateEvent", update_data);
-          }
+          console.log(currentEvents[i]);
+          // update
+          const update_data = {
+            title: currentEvents[i].title,
+            start: currentEvents[i].start,
+            end: currentEvents[i].end,
+            allDay: currentEvents[i].allDay,
+          };
+          $store.dispatch("schedule/updateEvent", update_data);
         }
       }
     };
-
     // fullcalendar options
     const calendarOptions = {
       plugins: [
@@ -186,7 +156,7 @@ export default {
       dayMaxEvents: true, // event 갯수가 많아서 칸 초과했을 때 +개수로 표기
       nowIndicator: true, // 현재 시간 마크
       navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
-      events: all_events,
+      events: all_events.value,
       // [
       //   {
       //     id: 1,
@@ -213,8 +183,6 @@ export default {
     };
     return {
       calendarOptions,
-      // all_events,
-      currentEvents,
     };
   },
 };
