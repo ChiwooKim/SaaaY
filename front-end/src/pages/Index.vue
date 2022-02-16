@@ -44,6 +44,8 @@
           @click="leaveSession"
           value="Leave session"
         />
+        <button @click="videoToggle">Video</button>
+        <button @click="audioToggle">Audio</button>
       </div>
       <div id="main-video" class="col-md-6">
         <user-video :stream-manager="mainStreamManager" />
@@ -88,6 +90,8 @@ export default {
       mainStreamManager: undefined,
       publisher: undefined,
       subscribers: [],
+      isVideo: true,
+      isAudio: true,
 
       mySessionId: "SessionA",
       myUserName: "Participant" + Math.floor(Math.random() * 100),
@@ -179,6 +183,18 @@ export default {
     updateMainVideoStreamManager(stream) {
       if (this.mainStreamManager === stream) return;
       this.mainStreamManager = stream;
+    },
+
+    videoToggle() {
+      this.isVideo = !this.isVideo;
+      this.publisher.publishVideo(this.isVideo);
+      // this.subscriber.subscribeToVideo(this.isVideo);
+    },
+
+    audioToggle() {
+      this.isAudio = !this.isAudio;
+      this.publisher.publishAudio(this.isAudio);
+      // this.subscriber.subscribeToAudio(this.isAudio);
     },
 
     /**
