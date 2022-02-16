@@ -7,6 +7,7 @@ import {
 
 // import example from './module-example'
 import account from "./module-account";
+import schedule from "./module-schedule";
 // import room from "./module-room";
 import signin from "./module-signin";
 
@@ -44,6 +45,7 @@ export default store(function (/* { ssrContext } */) {
     modules: {
       // example
       account,
+      schedule,
       // room,
       signin,
     },
