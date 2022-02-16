@@ -25,16 +25,12 @@ export default {
     const $store = useStore();
     const $q = useQuasar();
     const accessToken = Cookies.get("access_token");
+    let currentEvents = [];
+
     // // 이미 등록되어있는 이벤트는 eventSet에 추가(created)
     $store.dispatch("schedule/getEvent").catch(console.log);
-    let all_events = computed(() => $store.state.schedule.events);
-    let currentEvents = [];
-    console.log("test", currentEvents);
-    // eslint-disable-next-line vue/return-in-computed-property
-    // const all_events = computed(() => {
-    //   return $store.state.schedule.events;
-    // });
-    // console.log(all_events.value);
+    // let start_data = $store.state.schedule.events;
+    // console.log("1qaz", start_data);
 
     // // 일정 생성하기
     const handleDateSelect = (arg) => {
@@ -108,15 +104,12 @@ export default {
       });
     };
 
-    // // 등록되었을 배열에 추가, 일정이 바뀐 events들 확인 후 backend에 data 전달하고 배열에서 제거
+    // 등록되었을 배열에 추가, 일정이 바뀐 events들 확인 후 backend에 data 전달하고 배열에서 제거
     const changeEvent = (events) => {
       currentEvents = events;
-      console.log("sss", typeof events);
-      if (currentEvents.length > 0) {
+      if (currentEvents.length === 1) {
         // all-day가 true인 경우 시간일정이 바뀌었다는 것이므로 update로 보내기
         for (let i = 0; i < currentEvents.length; i++) {
-          console.log(currentEvents[i]);
-          // update
           const update_data = {
             title: currentEvents[i].title,
             start: currentEvents[i].start,
@@ -126,6 +119,7 @@ export default {
           $store.dispatch("schedule/updateEvent", update_data);
         }
       }
+      currentEvents = [];
     };
     // fullcalendar options
     const calendarOptions = {
@@ -156,31 +150,32 @@ export default {
       dayMaxEvents: true, // event 갯수가 많아서 칸 초과했을 때 +개수로 표기
       nowIndicator: true, // 현재 시간 마크
       navLinks: true, // 날짜를 선택하면 Day 캘린더나 Week 캘린더로 링크
-      events: all_events.value,
-      // [
-      //   {
-      //     id: 1,
+      events: $store.state.schedule.events,
+      //   [
+      //     {
+      //       id: 1,
 
-      //     title: "Test1",
+      //       title: "Test1",
 
-      //     start: "2022-02-17T04:30:00.000Z",
-      //     end: "2022-02-17T05:30:00.000Z",
-      //   },
+      //       start: "2022-02-17T04:30:00.000Z",
+      //       end: "2022-02-17T05:30:00.000Z",
+      //     },
 
-      //   {
-      //     id: 2,
+      //     {
+      //       id: 2,
 
-      //     title: "Test2",
+      //       title: "Test2",
 
-      //     start: "2022-02-18T07:00:00.000Z",
+      //       start: "2022-02-18T07:00:00.000Z",
 
-      //     end: "2022-02-18T07:00:00.000Z",
-      //   },
-      // ],
+      //       end: "2022-02-18T07:00:00.000Z",
+      //     },
+      //   ],
       select: handleDateSelect, // 날짜 선택 후 event 등록
       eventClick: handleEventClick,
       eventsSet: changeEvent, // 등록한 일정, 변경된 일정 check
     };
+
     return {
       calendarOptions,
     };

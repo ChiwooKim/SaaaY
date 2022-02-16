@@ -26,18 +26,22 @@ export class ScheduleService {
   }
 
   public async updateSchedule(
-    id: string,
     title: string,
     start: string,
     end: string,
     allDay: boolean,
   ) {
-    const result = await updateSchedule(id, title, start, end, allDay);
+    const result = await updateSchedule(title, start, end, allDay);
     return result;
   }
 
-  public async deleteSchedule(id: string) {
-    const result = await deleteSchedule(id);
+  public async deleteSchedule(
+    title: string,
+    start: string,
+    end: string,
+    allDay: boolean,
+  ) {
+    const result = await deleteSchedule(title, start, end, allDay);
     return result;
   }
 }

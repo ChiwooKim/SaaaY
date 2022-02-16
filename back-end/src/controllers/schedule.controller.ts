@@ -68,7 +68,6 @@ export class ScheduleController {
   async updateSchedule(
     @Body()
     params: {
-      id: string;
       title: string;
       start: string;
       end: string;
@@ -77,7 +76,6 @@ export class ScheduleController {
     @Res() res: Response,
   ) {
     const schedule = await this.scheduleService.updateSchedule(
-      params.id,
       params.title,
       params.start,
       params.end,
@@ -92,11 +90,19 @@ export class ScheduleController {
   async deleteSchedule(
     @Body()
     params: {
-      id: string;
+      title: string;
+      start: string;
+      end: string;
+      allDay: boolean;
     },
     @Res() res: Response,
   ) {
-    const schedule = await this.scheduleService.deleteSchedule(params.id);
+    const schedule = await this.scheduleService.deleteSchedule(
+      params.title,
+      params.start,
+      params.end,
+      params.allDay,
+    );
     res.status(HttpStatus.OK).json(schedule);
   }
 }
