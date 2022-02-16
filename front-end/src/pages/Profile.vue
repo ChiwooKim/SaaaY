@@ -53,8 +53,12 @@
               </q-input>
             </q-form>
             <div class="row justify-around">
-              <q-chip square>Following {{ user.following.length }}</q-chip>
-              <q-chip square>Follower {{ user.follower.length }}</q-chip>
+              <div @click="goFollow" class="route">
+                <q-chip square>Following {{ user.following.length }}</q-chip>
+              </div>
+              <div @click="goFollow" class="route">
+                <q-chip square>Follower {{ user.follower.length }}</q-chip>
+              </div>
             </div>
           </q-card-section>
           <div style="height: 60px"></div>
@@ -80,7 +84,7 @@
 <script>
 import { useStore } from "src/store";
 import { computed, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   updated() {
@@ -89,6 +93,7 @@ export default {
   setup() {
     const $store = useStore();
     const route = useRoute();
+    const router = useRouter();
     const userId = computed(() => route.params.userId);
     $store.dispatch("user/getUserById", userId.value).catch(console.log);
 
@@ -101,6 +106,11 @@ export default {
     //   following: [],
     // };
     // let user = ref({ ...$store.state.signin.user });
+
+    const goFollow = async () => {
+      console.log("aaaa");
+      await router.push(`/account/${userId.value}`);
+    };
 
     watch(userId, () => {
       $store
@@ -116,7 +126,14 @@ export default {
       onReset() {
         console.log(user);
       },
+      goFollow,
     };
   },
 };
 </script>
+
+<style scoped>
+.route {
+  cursor: pointer;
+}
+</style>

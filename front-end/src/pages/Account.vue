@@ -323,7 +323,6 @@ export default {
     const $store = useStore();
     // let targetId = route.params.targetId;
     const targetId = computed(() => route.params.targetId);
-    $store.dispatch('')
     let myId;
     myId = "";
     // let accessToken: string;
@@ -335,7 +334,7 @@ export default {
     //     accessToken = data[1];
     //   }
     // }
-    const accessToken = Cookies.get("access_token");
+    const accessToken = "Bearer " + Cookies.get("access_token");
     if (accessToken) {
       const base64Url = accessToken.split(".")[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
