@@ -28,6 +28,7 @@
     "quasar": "^2.0.0",
     "scrollmagic": "^2.0.8",
     "vue": "^3.0.0",
+    "vue-base-input": "^1.0.9",
     "vue-router": "^4.0.12",
     "vuex": "^4.0.2"
   },

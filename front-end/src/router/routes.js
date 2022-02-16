@@ -47,6 +47,20 @@ const routes = [
   },
 
   {
+    name: "Signup",
+    path: "/signup",
+    component: () => import("layouts/PreviewLayout.vue"),
+    children: [{ path: "", component: () => import("pages/Signup.vue") }],
+  },
+
+  {
+    name: "Profile",
+    path: "/profile",
+    component: () => import("layouts/PreviewLayout.vue"),
+    children: [{ path: "", component: () => import("pages/Profile.vue") }],
+  },
+
+  {
     path: "/roomList",
     component: () => import("layouts/MainLayout.vue"),
     children: [{ path: "", component: () => import("pages/roomList.vue") }],

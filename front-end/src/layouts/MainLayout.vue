@@ -106,7 +106,7 @@
                   </q-item-section>
                 </q-item>
                 <q-separator />
-                <q-item clickable class="GL__menu-link">
+                <q-item clickable class="GL__menu-link" to="profile">
                   <q-item-section>Your profile</q-item-section>
                 </q-item>
                 <q-separator />
@@ -116,7 +116,7 @@
                 <q-item clickable class="GL__menu-link">
                   <q-item-section>Settings</q-item-section>
                 </q-item>
-                <q-item clickable class="GL__menu-link">
+                <q-item clickable class="GL__menu-link" to="/">
                   <q-item-section>Sign out</q-item-section>
                 </q-item>
               </q-list>

@@ -1,7 +1,6 @@
-import { Result } from 'neo4j-driver';
 import { driver } from './connection-pools/neo4j.db';
 
-export async function getOwner(targetId: string): Promise<Result> {
+export async function getOwner(targetId: string) {
   let result;
   const session = driver().session();
 
@@ -18,7 +17,7 @@ export async function getOwner(targetId: string): Promise<Result> {
   return result.records;
 }
 
-export async function getFollowerList(targetId: string): Promise<Result> {
+export async function getFollowerList(targetId: string) {
   let result;
   const followingId = [];
   let followings;
@@ -51,7 +50,7 @@ export async function getFollowerList(targetId: string): Promise<Result> {
   return result.records;
 }
 
-export async function myFollower(myId: string): Promise<string[]> {
+export async function myFollower(myId: string) {
   let result;
   const followerList = [];
   const session = driver().session();
@@ -72,7 +71,7 @@ export async function myFollower(myId: string): Promise<string[]> {
   return followerList;
 }
 
-export async function getFollowingList(targetId: string): Promise<Result> {
+export async function getFollowingList(targetId: string) {
   let result;
   const followerId = [];
   let followers;
@@ -105,7 +104,7 @@ export async function getFollowingList(targetId: string): Promise<Result> {
   return result.records;
 }
 
-export async function myFollowing(myId: string): Promise<string[]> {
+export async function myFollowing(myId: string) {
   let result;
   const followingList = [];
   const session = driver().session();
@@ -126,10 +125,7 @@ export async function myFollowing(myId: string): Promise<string[]> {
   return followingList;
 }
 
-export async function addFollow(
-  targetId: string,
-  myId: string,
-): Promise<boolean> {
+export async function addFollow(targetId: string, myId: string) {
   let result;
   const session = driver().session();
 
@@ -151,10 +147,7 @@ export async function addFollow(
   return true;
 }
 
-export async function deleteFollow(
-  targetId: string,
-  myId: string,
-): Promise<boolean> {
+export async function deleteFollow(targetId: string, myId: string) {
   let result;
   const session = driver().session();
 
@@ -176,10 +169,7 @@ export async function deleteFollow(
   return true;
 }
 
-export async function addBlock(
-  targetId: string,
-  myId: string,
-): Promise<boolean> {
+export async function addBlock(targetId: string, myId: string) {
   let result;
   const session = driver().session();
 
@@ -201,10 +191,7 @@ export async function addBlock(
   return true;
 }
 
-export async function deleteBlock(
-  targetId: string,
-  myId: string,
-): Promise<boolean> {
+export async function deleteBlock(targetId: string, myId: string) {
   let result;
   const session = driver().session();
 
@@ -226,7 +213,7 @@ export async function deleteBlock(
   return true;
 }
 
-export async function getBlockList(targetId: string): Promise<Result> {
+export async function getBlockList(targetId: string) {
   let result;
   const session = driver().session();
 

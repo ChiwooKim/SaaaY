@@ -9,6 +9,8 @@ export class UserDto {
   public grade: string;
   public biography: string;
   public role: string;
+  public follower: UserDto[];
+  public following: UserDto[];
 
   constructor(email: string, password: string) {
     this.email = email;
