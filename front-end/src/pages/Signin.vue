@@ -57,17 +57,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { ref } from 'vue';
-import { Cookies, useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
-import { AxiosResponse } from 'axios';
+<script>
+import { ref } from "vue";
+import { Cookies, useQuasar } from "quasar";
+import { api } from "src/boot/axios";
+import { AxiosResponse } from "axios";
 
 export default {
   created() {
-    const value = Cookies.get('access_token');
+    const value = Cookies.get("access_token");
     if (value) {
-      
     }
   },
   setup() {
@@ -94,18 +93,18 @@ export default {
           password: password.value,
         };
         api
-          .post('/user/login', user)
-          .then((response: AxiosResponse<{ access_token: string }>) => {
-            Cookies.set('access_token', response.data.access_token, {
-              expires: '1d',
+          .post("/user/login", user)
+          .then((responsive) => {
+            Cookies.set("access_token", response.data.access_token, {
+              expires: "1d",
             });
           })
           .catch(() => {
             $q.notify({
-              color: 'red-5',
-              textColor: 'white',
-              icon: 'warning',
-              message: 'Check Your Email or Password',
+              color: "red-5",
+              textColor: "white",
+              icon: "warning",
+              message: "Check Your Email or Password",
             });
           });
 
