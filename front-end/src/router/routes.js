@@ -18,6 +18,7 @@ const routes = [
         path: "/account/:targetId",
         component: () => import("pages/Account.vue"),
       },
+      { path: "/profile", component: () => import("src/pages/Profile.vue") },
     ],
   },
 

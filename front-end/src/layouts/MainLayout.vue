@@ -102,7 +102,9 @@
               <q-list dense>
                 <q-item class="GL__menu-link-signed-in">
                   <q-item-section>
-                    <div>Signed in as <strong>UserName</strong></div>
+                    <div>
+                      Signed in as <strong>{{}}</strong>
+                    </div>
                   </q-item-section>
                 </q-item>
                 <q-separator />
@@ -219,10 +221,11 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { fabYoutube } from "@quasar/extras/fontawesome-v5";
 import { defineComponent } from "vue";
 import { useQuasar } from "quasar";
+import { useStore } from "src/store";
 // import { watch } from 'vue';
 
 // import { Notify } from 'quasar';
@@ -239,6 +242,7 @@ export default defineComponent({
     const $q = useQuasar();
     const leftDrawerOpen = ref(false);
     const search = ref("");
+    const $store = useStore();
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
     }
@@ -251,6 +255,9 @@ export default defineComponent({
     //     color: 'secondary',
     //   });
     // });
+    watch(() => {
+      console.log("first");
+    });
 
     // 수정사항
     // 삭제

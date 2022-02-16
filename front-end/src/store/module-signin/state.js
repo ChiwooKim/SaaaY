@@ -1,14 +1,13 @@
 export default function () {
   return {
     prop: false,
-    message: 'Hello',
+    message: "signin",
     user: {
-      email: 'string',
-      username: 'string',
-      biography: 'string',
+      email: "string",
+      username: "string",
+      biography: "string",
       follower: [],
-      following: []
+      following: [],
     },
   };
-
 }

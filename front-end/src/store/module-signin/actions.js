@@ -14,8 +14,10 @@ export function authenticate({ commit }, user) {
     .then(() => api.post("/user/email", user))
     .then((response) => {
       commit("authenticate", response.data);
+      window.location.href = '#/main';
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err);
       Notify.create({
         color: "red-5",
         textColor: "white",

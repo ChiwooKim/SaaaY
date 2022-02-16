@@ -62,8 +62,8 @@ import { ref } from "vue";
 import { Cookies, useQuasar } from "quasar";
 import { api } from "src/boot/axios";
 import { AxiosResponse } from "axios";
-import { useStore } from "vuex";
-import { useRouter } from 'vue-router';
+import { useStore } from "src/store";
+import { useRouter } from "vue-router";
 
 export default {
   created() {
@@ -96,22 +96,35 @@ export default {
           email: email.value,
           password: password.value,
         };
-        api
-          .post("/user/login", user)
-          .then((response) => {
-            Cookies.set("access_token", response.data.access_token, {
-              expires: "1d",
-            });
-            router.push("main");
-          })
-          .catch(() => {
-            $q.notify({
-              color: "red-5",
-              textColor: "white",
-              icon: "warning",
-              message: "Check Your Email or Password",
-            });
-          });
+        $store
+          .dispatch("signin/authenticate", user)
+          .catch(console.log);
+          /**
+           * () => {
+      Notify.create({
+        color: "red-5",
+        textColor: "white",
+        icon: "warning",
+        message: "Check Your Email or Password",
+      });
+    }
+           */
+        // api
+        //   .post("/user/login", user)
+        //   .then((response) => {
+        //     Cookies.set("access_token", response.data.access_token, {
+        //       expires: "1d",
+        //     });
+        //     router.push("main");
+        //   })
+        //   .catch(() => {
+        //     $q.notify({
+        //       color: "red-5",
+        //       textColor: "white",
+        //       icon: "warning",
+        //       message: "Check Your Email or Password",
+        //     });
+        //   });
 
         // $q.notify({
         //   color: 'green-4',
