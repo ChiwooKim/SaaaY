@@ -72,6 +72,7 @@
             icon="apps"
             v-if="$q.screen.gt.sm"
             @click="showNotif()"
+            href="/#/roomList"
           >
             <q-tooltip>Apps</q-tooltip>
           </q-btn>
@@ -102,9 +103,7 @@
               <q-list dense>
                 <q-item class="GL__menu-link-signed-in">
                   <q-item-section>
-                    <div>
-                      Signed in as <strong>{{}}</strong>
-                    </div>
+                    <div>Signed in as <strong>{{}}</strong></div>
                   </q-item-section>
                 </q-item>
                 <q-separator />
