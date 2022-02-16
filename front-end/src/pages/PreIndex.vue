@@ -40,15 +40,14 @@
   </section>
 </template>
 
-<script lang="ts">
-import ScrollMagic from 'scrollmagic';
+<script>
+import ScrollMagic from "scrollmagic";
 
 export default {
   mounted() {
     //  * 요소가 화면에 보여짐 여부에 따른 요소 관리
     // 관리할 요소들 검색!
-    const spyEls = document.querySelectorAll('.description.scroll-spy');
-    console.log(spyEls);
+    const spyEls = document.querySelectorAll(".description.scroll-spy");
     // 요소들 반복 처리!
     spyEls.forEach(function (spyEl) {
       new ScrollMagic.Scene({
@@ -56,7 +55,7 @@ export default {
         triggerElement: spyEl, // 보여짐 여부를 감시할 요소를 지정
         triggerHook: 0.7, // 화면의 80% 지점에서 보여짐 여부 감시
       })
-        .setClassToggle(spyEl, 'show') // 요소가 화면에 보이면 show 클래스 추가
+        .setClassToggle(spyEl, "show") // 요소가 화면에 보이면 show 클래스 추가
         .addTo(new ScrollMagic.Controller()); // 컨트롤러에 장면을 할당(필수!)
     });
   },
@@ -65,9 +64,9 @@ export default {
 
 <style lang="scss" scoped>
 section {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   .btn {
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: "Nanum Gothic", sans-serif;
   }
 }
 
@@ -111,13 +110,13 @@ section {
   align-items: center;
   padding: 150px;
   &.img_1 {
-    background-image: url('../../public/images/description_bg1.jpg');
+    background-image: url("../../public/images/description_bg1.jpg");
   }
   &.img_2 {
-    background-image: url('../../public/images/description_bg2.jpg');
+    background-image: url("../../public/images/description_bg2.jpg");
   }
   &.img_3 {
-    background-image: url('../../public/images/description_bg3.jpg');
+    background-image: url("../../public/images/description_bg3.jpg");
   }
   .text-group {
     display: flex;

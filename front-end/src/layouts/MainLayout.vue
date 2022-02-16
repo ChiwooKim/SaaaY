@@ -71,19 +71,11 @@
             color="grey-8"
             icon="apps"
             v-if="$q.screen.gt.sm"
-            href="/#/main"
+            @click="showNotif()"
           >
             <q-tooltip>Apps</q-tooltip>
           </q-btn>
-          <q-btn
-            round
-            dense
-            flat
-            color="grey-8"
-            icon="message"
-            v-if="$q.screen.gt.sm"
-            href="/#/main"
-          >
+          <q-btn round dense flat color="grey-8" icon="message" href="/#/chat">
             <q-tooltip>Messages</q-tooltip>
           </q-btn>
           <q-btn
@@ -100,11 +92,35 @@
             <q-badge color="red" text-color="white" floating> 2 </q-badge>
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
+          <!-- 로그인시 수정 로그아웃시 수정 -->
           <q-btn round flat>
             <q-avatar size="26px">
               <img src="images/blank-profile-picture.png" />
             </q-avatar>
             <q-tooltip>Account</q-tooltip>
+            <q-menu auto-close>
+              <q-list dense>
+                <q-item class="GL__menu-link-signed-in">
+                  <q-item-section>
+                    <div>Signed in as <strong>UserName</strong></div>
+                  </q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section>Your profile</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section>Help</q-item-section>
+                </q-item>
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section>Settings</q-item-section>
+                </q-item>
+                <q-item clickable class="GL__menu-link">
+                  <q-item-section>Sign out</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
       </q-toolbar>
@@ -203,62 +219,96 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { fabYoutube } from '@quasar/extras/fontawesome-v5';
-import { defineComponent } from 'vue';
+import { ref } from "vue";
+import { fabYoutube } from "@quasar/extras/fontawesome-v5";
+import { defineComponent } from "vue";
+import { useQuasar } from "quasar";
+// import { watch } from 'vue';
+
+// import { Notify } from 'quasar';
+// 알림 기능
+// Notify.create('Danger, Will Robinson! Danger!');
+// // or with a config object:
+// Notify.create({
+//   message: 'Danger, Will Robinson! Danger!',
+// });
 
 export default defineComponent({
-  name: 'MyLayout',
+  name: "MyLayout",
   setup() {
+    const $q = useQuasar();
     const leftDrawerOpen = ref(false);
-    const search = ref('');
+    const search = ref("");
     function toggleLeftDrawer() {
       leftDrawerOpen.value = !leftDrawerOpen.value;
     }
+    // // 알람 기능
+    // watch(() => {
+    //   $q.notify({
+    //     position: 'bottom-right',
+    //     message: 'Jim pinged you.',
+    //     caption: '5 minutes ago',
+    //     color: 'secondary',
+    //   });
+    // });
+
+    // 수정사항
+    // 삭제
+    function showNotif() {
+      $q.notify({
+        position: "bottom-right",
+        message: "Jim pinged you.",
+        caption: "5 minutes ago",
+        color: "secondary",
+      });
+    }
     return {
+      showNotif,
+
       fabYoutube,
       leftDrawerOpen,
       search,
       toggleLeftDrawer,
       links1: [
-        { icon: 'home', text: 'Home' },
-        { icon: 'whatshot', text: 'Trending' },
-        { icon: 'bookmark', text: 'Subscriptions' },
+        { icon: "home", text: "Home" },
+        { icon: "whatshot", text: "Trending" },
+        { icon: "bookmark", text: "Subscriptions" },
       ],
       links2: [
-        { icon: 'folder', text: 'Library' },
-        { icon: 'restore', text: 'History' },
-        { icon: 'watch_later', text: 'Watch later' },
-        { icon: 'thumb_up_alt', text: 'Liked videos' },
+        { icon: "folder", text: "Library" },
+        { icon: "restore", text: "History" },
+        { icon: "watch_later", text: "Watch later" },
+        { icon: "thumb_up_alt", text: "Liked videos" },
       ],
       links3: [
-        { icon: 'local_movies', text: 'Movies & Shows' },
-        { icon: 'videogame_asset', text: 'Gaming' },
-        { icon: 'live_tv', text: 'Live' },
+        { icon: "local_movies", text: "Movies & Shows" },
+        { icon: "videogame_asset", text: "Gaming" },
+        { icon: "live_tv", text: "Live" },
       ],
       links4: [
-        { icon: 'settings', text: 'Settings' },
-        { icon: 'flag', text: 'Report history' },
-        { icon: 'help', text: 'Help' },
-        { icon: 'feedback', text: 'Send feedback' },
+        { icon: "settings", text: "Settings" },
+        { icon: "flag", text: "Report history" },
+        { icon: "help", text: "Help" },
+        { icon: "feedback", text: "Send feedback" },
       ],
       buttons1: [
-        { text: 'About' },
-        { text: 'Press' },
-        { text: 'Copyright' },
-        { text: 'Contact us' },
-        { text: 'Creators' },
-        { text: 'Advertise' },
-        { text: 'Developers' },
+        { text: "About" },
+        { text: "Press" },
+        { text: "Copyright" },
+        { text: "Contact us" },
+        { text: "Creators" },
+        { text: "Advertise" },
+        { text: "Developers" },
       ],
       buttons2: [
-        { text: 'Terms' },
-        { text: 'Privacy' },
-        { text: 'Policy & Safety' },
-        { text: 'Test new features' },
+        { text: "Terms" },
+        { text: "Privacy" },
+        { text: "Policy & Safety" },
+        { text: "Test new features" },
       ],
     };
   },
+  created() {},
 });
 </script>
 
@@ -268,8 +318,6 @@ export default defineComponent({
     min-width: 100px;
     width: 55%;
     border-radius: 50%;
-    input {
-    }
   }
   &__toolbar-input-btn {
     border-radius: 0;
@@ -286,6 +334,26 @@ export default defineComponent({
     font-size: 0.75rem;
     &:hover {
       color: #000;
+    }
+  }
+}
+
+.GL {
+  &__menu-link {
+    font-size: 12px;
+  }
+  &__menu-link:hover {
+    background: #555;
+    color: white;
+  }
+  &__menu-link-signed-in,
+  &__menu-link-status {
+    font-size: 12px;
+  }
+  &__menu-link-status {
+    color: $blue-grey-6;
+    &:hover {
+      color: $light-blue-9;
     }
   }
 }
