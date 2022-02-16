@@ -10,7 +10,6 @@ import account from "./module-account";
 import room from "./module-room";
 import main from "./module-main";
 import schedule from "./module-schedule";
-import room from "./module-room";
 import signin from "./module-signin";
 import user from "./module-user";
 

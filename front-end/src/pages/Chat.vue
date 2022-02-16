@@ -5,7 +5,7 @@
 
       <template v-for="(chat, index) in chats" :key="index">
         <q-chat-message
-          v-if="(chat.userName === myName) | !myName"
+          v-if="chat.userName === myName"
           name="me"
           avatar="https://cdn.quasar.dev/img/avatar6.jpg"
           :text="[chat.chat]"

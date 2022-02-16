@@ -507,9 +507,10 @@ export default {
           console.error(error);
         });
 
-      this.session.on("signal", (event) => {
-        this.$store.commit("main/setMyName", event.from.connectionId);
-      });
+      this.$store.commit(
+        "main/setMyName",
+        this.session.connection.connectionId
+      );
     },
   },
 };
