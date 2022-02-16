@@ -19,3 +19,8 @@ export function CLEAR_ROOM(state) {
   };
   console.log("room clear : ", state.room);
 }
+
+export function SET_INDEX(state, index) {
+  console.log("index : ", index);
+  state.index = index;
+}

@@ -5858,6 +5858,11 @@ vary@~1.1.2:
   resolved "https://registry.npmjs.org/vary/-/vary-1.1.2.tgz"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
+vue-base-input@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/vue-base-input/-/vue-base-input-1.0.9.tgz#40cd693c7b6be5b7a76a78d5035492b23953a846"
+  integrity sha512-4ZQFKe8wPLZ03oQ8KkqwOts/TuPCJFkOn4M1HRJmoRWj2BTm4fZf1juDK0s+6WZ0fRccVOcfZSWEbLWfHzcZ1w==
+
 vue-eslint-parser@^7.10.0:
   version "7.11.0"
   resolved "https://registry.npmjs.org/vue-eslint-parser/-/vue-eslint-parser-7.11.0.tgz"

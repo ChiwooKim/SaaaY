@@ -19,8 +19,7 @@
           <q-separator />
 
           <q-card-actions align="right">
-            <q-btn flat>Action 1</q-btn>
-            <q-btn flat>Action 2</q-btn>
+            <q-btn @click="getRoom(index)">방 참가하기</q-btn>
           </q-card-actions>
         </q-card>
       </div>
@@ -33,7 +32,7 @@ import { computed } from "vue";
 //다이얼로그 사용하기위해 임포트!!!!
 import { useQuasar } from "quasar";
 // import { computed, ref, watch } from 'vue';
-// import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "src/store";
 import { Cookies } from "quasar";
 
@@ -42,6 +41,7 @@ export default {
     // const route = useRoute();
     // const router = useRouter();
     const $store = useStore();
+    const router = useRouter();
     //다이얼로그 사용하기위해서 선언!!!
     const $q = useQuasar();
     //엑세스토큰 쿠키에서 가져오기
@@ -49,6 +49,14 @@ export default {
     $store.dispatch("room/getRoomList").catch(console.log);
 
     const loadRoomList = () => $store.dispatch("room/getRoomList");
+
+    //룸  vuex 데이터 갱신 함수
+    const getRoom = async (index) => {
+      // $store.dispatch("room/setIndex", index);
+      // $store.
+      await $store.dispatch("room/getRoom", index);
+      await router.push(`/main/${index}`);
+    };
 
     //방생성
     let room = {
@@ -97,6 +105,7 @@ export default {
       rooms,
       loadRoomList,
       prompt,
+      getRoom,
     }; //end setup
   }, // end export default
 };

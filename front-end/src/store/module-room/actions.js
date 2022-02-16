@@ -28,3 +28,7 @@ export function createRoom({ commit }, data) {
       console.log("프론트에서 데이터 보냄", data);
     });
 }
+
+export function setIndex({ commit }, index) {
+  commit("SET_INDEX", index);
+}

@@ -70,6 +70,8 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import UserVideo from "src/components/UserVideo";
+import { useStore } from "src/store";
+import { useRoute, useRouter } from "vue-router";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -92,10 +94,19 @@ export default {
       subscribers: [],
       isVideo: true,
       isAudio: true,
+      // index: $store.state.room.index,
+      // room: $store.dispatch("room/getRoom", index),
+      mySessionId: "test",
 
-      mySessionId: "SessionA",
+      //토큰에서 가져와서 쓰면 된다.
       myUserName: "Participant" + Math.floor(Math.random() * 100),
     };
+  },
+  created() {
+    const $store = useStore();
+    const route = useRoute();
+    $store.dispatch("room/getRoom", route.params.roomId);
+    this.mySessionId = $store.state.room.room.moderator[0];
   },
 
   methods: {

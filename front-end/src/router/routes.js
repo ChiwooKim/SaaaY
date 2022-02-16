@@ -12,7 +12,7 @@ const routes = [
     path: "/main",
     component: () => import("src/layouts/MainLayout.vue"),
     children: [
-      { path: "", component: () => import("src/pages/Index.vue") },
+      { path: ":roomId", component: () => import("src/pages/Index.vue") },
       { path: "/calendar", component: () => import("pages/Calendar.vue") },
       {
         path: "/account/:targetId",
