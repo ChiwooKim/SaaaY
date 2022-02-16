@@ -53,7 +53,7 @@
         <q-space />
 
         <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn
+          <!-- <q-btn
             round
             dense
             flat
@@ -63,7 +63,7 @@
             href="/#/main"
           >
             <q-tooltip>Create a video or post</q-tooltip>
-          </q-btn>
+          </q-btn> -->
           <q-btn
             round
             dense

@@ -9,21 +9,23 @@
         <div class="form-group">
           <p>
             <label>Participant</label>
-            <input
+            <!-- <input
               v-model="myUserName"
               class="form-control"
               type="text"
               required
-            />
+              readonly
+            /> -->
           </p>
           <p>
             <label>Session</label>
-            <input
+            <!-- <input
               v-model="mySessionId"
               class="form-control"
               type="text"
               required
-            />
+              readonly
+            /> -->
           </p>
           <p class="text-center">
             <button class="btn btn-lg btn-success" @click="joinSession()">
@@ -36,7 +38,7 @@
 
     <div id="session" v-if="session">
       <div id="session-header">
-        <h1 id="session-title">{{ mySessionId }}</h1>
+        <h1 id="session-title">{{ roomName }}</h1>
         <input
           class="btn btn-large btn-danger"
           type="button"
@@ -72,6 +74,8 @@ import { OpenVidu } from "openvidu-browser";
 import UserVideo from "src/components/UserVideo";
 import { useStore } from "src/store";
 import { useRoute, useRouter } from "vue-router";
+import { Cookies } from "quasar";
+import { computed } from "vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -97,6 +101,7 @@ export default {
       // index: $store.state.room.index,
       // room: $store.dispatch("room/getRoom", index),
       mySessionId: "test",
+      roomName: "undefined",
 
       //토큰에서 가져와서 쓰면 된다.
       myUserName: "Participant" + Math.floor(Math.random() * 100),
@@ -105,8 +110,30 @@ export default {
   created() {
     const $store = useStore();
     const route = useRoute();
+    const accessToken = "Bearer " + Cookies.get("access_token");
+    this.roomName = $store.state.room.room.roomName;
+
     $store.dispatch("room/getRoom", route.params.roomId);
-    this.mySessionId = $store.state.room.room.moderator[0];
+    this.mySessionId = computed(() =>
+      $store.state.room.room.moderator[0].replace("@", "").replace(".", "")
+    );
+
+    console.log(this.mySessionId.replace(/\-/g, ""));
+    if (accessToken) {
+      const base64Url = accessToken.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+
+      const data = JSON.parse(jsonPayload);
+      this.myUserName = data.email;
+    }
   },
 
   methods: {
@@ -288,3 +315,277 @@ export default {
   },
 };
 </script>
+
+<style>
+/* html {
+  position: relative;
+  min-height: 100%;
+} */
+
+nav {
+  height: 50px;
+  width: 100%;
+  z-index: 1;
+  background-color: #4d4d4d !important;
+  border-color: #4d4d4d !important;
+  border-top-right-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+}
+
+.navbar-header {
+  width: 100%;
+}
+
+.nav-icon {
+  padding: 5px 15px 5px 15px;
+  float: right;
+}
+
+nav a {
+  color: #ccc !important;
+}
+
+nav i.fa {
+  font-size: 40px;
+  color: #ccc;
+}
+
+nav a:hover {
+  color: #a9a9a9 !important;
+}
+
+nav i.fa:hover {
+  color: #a9a9a9;
+}
+
+#main-container {
+  padding-bottom: 80px;
+}
+
+/*vertical-center {
+	position: relative;
+	top: 30%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}*/
+
+.horizontal-center {
+  margin: 0 auto;
+}
+
+.form-control {
+  color: #0088aa;
+  font-weight: bold;
+}
+
+.form-control:focus {
+  border-color: #0088aa;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(0, 136, 170, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(0, 136, 170, 0.6);
+}
+
+input.btn {
+  font-weight: bold;
+}
+
+.btn {
+  font-weight: bold !important;
+}
+
+.btn-success {
+  background-color: #06d362 !important;
+  border-color: #06d362;
+}
+
+.btn-success:hover {
+  background-color: #1abd61 !important;
+  border-color: #1abd61;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #4d4d4d;
+}
+
+.footer .text-muted {
+  margin: 20px 0;
+  float: left;
+  color: #ccc;
+}
+
+.openvidu-logo {
+  height: 35px;
+  float: right;
+  margin: 12px 0;
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+
+.openvidu-logo:hover {
+  -webkit-filter: grayscale(0.5);
+  filter: grayscale(0.5);
+}
+
+.demo-logo {
+  margin: 0;
+  height: 22px;
+  float: left;
+  padding-right: 8px;
+}
+
+a:hover .demo-logo {
+  -webkit-filter: brightness(0.7);
+  filter: brightness(0.7);
+}
+
+#join-dialog {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 70%;
+}
+
+#join-dialog h1 {
+  color: #4d4d4d;
+  font-weight: bold;
+  text-align: center;
+}
+
+#img-div {
+  text-align: center;
+  margin-top: 3em;
+  margin-bottom: 3em;
+  /*position: relative;
+	top: 20%;
+	left: 50%;
+	transform: translate(-50%, -50%);*/
+}
+
+#img-div img {
+  height: 15%;
+}
+
+#join-dialog label {
+  color: #0088aa;
+}
+
+#join-dialog input.btn {
+  margin-top: 15px;
+}
+
+#session-header {
+  margin-bottom: 20px;
+}
+
+#session-title {
+  display: inline-block;
+}
+
+#buttonLeaveSession {
+  float: right;
+  margin-top: 100px;
+  background-color: crimson;
+}
+
+#video-container video {
+  position: relative;
+  float: left;
+  width: 50%;
+  cursor: pointer;
+}
+
+#video-container video + div {
+  float: left;
+  width: 50%;
+  position: relative;
+  margin-left: -50%;
+}
+
+#video-container p {
+  display: inline-block;
+  background: #f8f8f8;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #777777;
+  font-weight: bold;
+  border-bottom-right-radius: 4px;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}
+
+#main-video p {
+  position: absolute;
+  display: inline-block;
+  background: #f8f8f8;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 22px;
+  color: #777777;
+  font-weight: bold;
+  border-bottom-right-radius: 4px;
+}
+
+#session img {
+  width: 100%;
+  height: auto;
+  display: inline-block;
+  object-fit: contain;
+  vertical-align: baseline;
+}
+
+#session #video-container img {
+  position: relative;
+  float: left;
+  width: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  height: 180px;
+}
+
+/* xs ans md screen resolutions*/
+
+@media screen and (max-width: 991px) and (orientation: portrait) {
+  #join-dialog {
+    max-width: inherit;
+  }
+  #img-div img {
+    height: 10%;
+  }
+  #img-div {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+  .container-fluid > .navbar-collapse,
+  .container-fluid > .navbar-header,
+  .container > .navbar-collapse,
+  .container > .navbar-header {
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .navbar-header i.fa {
+    font-size: 30px;
+  }
+  .navbar-header a.nav-icon {
+    padding: 7px 3px 7px 3px;
+  }
+}
+
+@media only screen and (max-height: 767px) and (orientation: landscape) {
+  #img-div {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  #join-dialog {
+    max-width: inherit;
+  }
+}
+</style>
