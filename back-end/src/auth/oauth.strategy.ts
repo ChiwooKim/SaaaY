@@ -12,7 +12,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
       clientID:
         '72977505379-1jusaas65jpecfmsh0q7g0a36itss7bm.apps.googleusercontent.com',
       clientSecret: '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',
-      callbackURL: 'http://localhost:3000/auth/google/redirect',
+      callbackURL: 'http://i6b203.p.ssafy.io:3000/auth/google/redirect',
       scope: ['email', 'profile'],
     });
   }
