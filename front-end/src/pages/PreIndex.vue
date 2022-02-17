@@ -10,7 +10,7 @@
       </div>
       <div class="title">
         <a
-          v-if="logIn === 'main'"
+          v-if="isLoggedIn"
           href="#/roomList"
           @click="clickon"
           class="btn btn--brown"
@@ -24,7 +24,7 @@
     <!--DESCRIPTIONS-->
     <div class="description img_2 scroll-spy">
       <div class="title">
-        <a v-if="logIn === 'main'" href="#/roomList" class="btn btn--brown"
+        <a v-if="isLoggedIn" href="#/roomList" class="btn btn--brown"
           >입장하기</a
         >
         <a v-else href="#/signin" class="btn btn--brown">로그인</a>
@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="title">
-        <a v-if="logIn === 'main'" href="#/roomList" class="btn btn--brown"
+        <a v-if="isLoggedIn" href="#/roomList" class="btn btn--brown"
           >입장하기</a
         >
         <a v-else href="#/signin" class="btn btn--brown">로그인</a>
@@ -59,11 +59,18 @@
 import { computed, defineComponent } from "vue";
 import { useStore } from "src/store";
 import ScrollMagic from "scrollmagic";
+import { Cookies } from "quasar";
 
 export default defineComponent({
   setup() {
     const $store = useStore();
-
+    let isLoggedIn;
+    if (Cookies.get("access_token")) {
+      isLoggedIn = true;
+    } else {
+      isLoggedIn = false;
+    }
+    console.log(isLoggedIn);
     const logIn = computed(() => {
       return $store.state.signin.message;
     });
@@ -71,7 +78,7 @@ export default defineComponent({
     function clickcon() {
       console.log($store.state.signin.message);
     }
-    return { logIn, clickcon };
+    return { logIn, clickcon, isLoggedIn };
   },
   mounted() {
     //  * 요소가 화면에 보여짐 여부에 따른 요소 관리

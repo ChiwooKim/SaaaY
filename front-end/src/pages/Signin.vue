@@ -47,6 +47,7 @@
               ]"
             />
             <div class="row justify-around">
+              <a :href="url">Sign in with Google</a>
               <q-btn label="Sign in" type="submit" color="primary" />
               <q-btn label="Sign up" to="signup" color="warning" />
             </div>
@@ -80,12 +81,17 @@ export default {
     const $q = useQuasar();
     const router = useRouter();
 
+    const CLIENT_ID =
+      "72977505379-1jusaas65jpecfmsh0q7g0a36itss7bm.apps.googleusercontent.com";
+    const REDIRECT_URL = "http://localhost:3000/auth/google/redirect";
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URL}&scope=https://www.googleapis.com/auth/userinfo.email`;
+
     return {
       email,
       password,
       name,
       age,
-
+      url,
       onReset() {
         email.value = null;
         password.value = null;
@@ -96,10 +102,8 @@ export default {
           email: email.value,
           password: password.value,
         };
-        $store
-          .dispatch("signin/authenticate", user)
-          .catch(console.log);
-          /**
+        $store.dispatch("signin/authenticate", user).catch(console.log);
+        /**
            * () => {
       Notify.create({
         color: "red-5",

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/entity/role.entity';
 import { User } from 'src/entity/user.entity';
@@ -7,6 +7,8 @@ import { UserRepository } from 'src/repositories/user.repository';
 import * as bcrypt from 'bcrypt';
 import { Record, Result } from 'neo4j-driver';
 import { AuthenticationError } from 'src/error/authentication.error';
+import axios, { AxiosResponse } from 'axios';
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
 @Injectable()
 export class UserService {
   async findUser(userId: string): Promise<UserDto> {
