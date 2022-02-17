@@ -65,6 +65,12 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [{ path: "", component: () => import("pages/roomList.vue") }],
   },
+  {
+    path: "/video",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [{ path: "", component: () => import("pages/Video.vue") }],
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
