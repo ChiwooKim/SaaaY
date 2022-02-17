@@ -1,32 +1,9 @@
 <template>
   <div id="main-container" class="container">
-    <div id="join" v-if="!session">
-      <div id="img-div">
-        <img src="resources/images/openvidu_grey_bg_transp_cropped.png" />
-      </div>
-      <div id="join-dialog" class="jumbotron vertical-center">
-        <h1>Join a video session</h1>
-        <div class="form-group">
-          <p>
-            <label>Participant</label>
-            <!-- <input
-              v-model="myUserName"
-              class="form-control"
-              type="text"
-              required
-              readonly
-            /> -->
-          </p>
-          <p>
-            <label>Session</label>
-            <!-- <input
-              v-model="mySessionId"
-              class="form-control"
-              type="text"
-              required
-              readonly
-            /> -->
-          </p>
+    <div id="join" v-if="!session" class="col self-center">
+      <div id="join-dialog">
+        <h1>Join a {{ roomName }}</h1>
+        <div class="form-group row justify-center">
           <p class="text-center">
             <button class="btn btn-lg btn-success" @click="joinSession()">
               Join!
@@ -37,17 +14,62 @@
     </div>
 
     <div id="session" v-if="session">
-      <div id="session-header">
-        <h1 id="session-title">{{ roomName }}</h1>
-        <input
-          class="btn btn-large btn-danger"
-          type="button"
-          id="buttonLeaveSession"
-          @click="leaveSession"
-          value="Leave session"
-        />
-        <button @click="videoToggle">Video</button>
-        <button @click="audioToggle">Audio</button>
+      <div id="session-header" class="row justify-center">
+        <div v-if="isVideo">
+          <q-btn
+            @click="videoToggle"
+            round
+            icon="videocam_off"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div v-else>
+          <q-btn
+            @click="videoToggle"
+            round
+            icon="video_camera_front"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div v-if="isAudio">
+          <q-btn
+            @click="audioToggle"
+            round
+            icon="mic_off"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div v-else>
+          <q-btn
+            @click="audioToggle"
+            round
+            icon="mic"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div>
+          <q-btn
+            @click="leaveSession"
+            round
+            icon="logout"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
       </div>
       <div id="main-video" class="col-md-6">
         <user-video :stream-manager="mainStreamManager" />
@@ -79,7 +101,7 @@ import { computed } from "vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":3333";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
@@ -214,8 +236,8 @@ export default {
       this.publisher = undefined;
       this.subscribers = [];
       this.OV = undefined;
-
       window.removeEventListener("beforeunload", this.leaveSession);
+      this.$router.push("/roomList");
     },
 
     updateMainVideoStreamManager(stream) {
@@ -322,42 +344,6 @@ export default {
   min-height: 100%;
 } */
 
-nav {
-  height: 50px;
-  width: 100%;
-  z-index: 1;
-  background-color: #4d4d4d !important;
-  border-color: #4d4d4d !important;
-  border-top-right-radius: 0 !important;
-  border-top-left-radius: 0 !important;
-}
-
-.navbar-header {
-  width: 100%;
-}
-
-.nav-icon {
-  padding: 5px 15px 5px 15px;
-  float: right;
-}
-
-nav a {
-  color: #ccc !important;
-}
-
-nav i.fa {
-  font-size: 40px;
-  color: #ccc;
-}
-
-nav a:hover {
-  color: #a9a9a9 !important;
-}
-
-nav i.fa:hover {
-  color: #a9a9a9;
-}
-
 #main-container {
   padding-bottom: 80px;
 }
@@ -399,25 +385,6 @@ input.btn {
   border-color: #06d362;
 }
 
-.btn-success:hover {
-  background-color: #1abd61 !important;
-  border-color: #1abd61;
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 60px;
-  background-color: #4d4d4d;
-}
-
-.footer .text-muted {
-  margin: 20px 0;
-  float: left;
-  color: #ccc;
-}
-
 .openvidu-logo {
   height: 35px;
   float: right;
@@ -426,23 +393,6 @@ input.btn {
   -moz-transition: all 0.1s ease-in-out;
   -o-transition: all 0.1s ease-in-out;
   transition: all 0.1s ease-in-out;
-}
-
-.openvidu-logo:hover {
-  -webkit-filter: grayscale(0.5);
-  filter: grayscale(0.5);
-}
-
-.demo-logo {
-  margin: 0;
-  height: 22px;
-  float: left;
-  padding-right: 8px;
-}
-
-a:hover .demo-logo {
-  -webkit-filter: brightness(0.7);
-  filter: brightness(0.7);
 }
 
 #join-dialog {
@@ -485,12 +435,6 @@ a:hover .demo-logo {
 
 #session-title {
   display: inline-block;
-}
-
-#buttonLeaveSession {
-  float: right;
-  margin-top: 100px;
-  background-color: crimson;
 }
 
 #video-container video {
