@@ -101,7 +101,7 @@ import { computed } from "vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "http://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_URL = "http://" + location.hostname + ":5443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
