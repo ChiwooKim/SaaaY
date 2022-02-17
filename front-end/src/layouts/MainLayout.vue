@@ -133,6 +133,10 @@
       bordered
       side="left"
       class="bg-grey-2"
+      mini-width="100"
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
+      :mini="miniState"
       :width="240"
     >
       <q-scroll-area class="fit">
@@ -240,6 +244,7 @@ export default defineComponent({
   setup() {
     const $q = useQuasar();
     const leftDrawerOpen = ref(false);
+
     const search = ref("");
     const $store = useStore();
     function toggleLeftDrawer() {
@@ -275,6 +280,7 @@ export default defineComponent({
       leftDrawerOpen,
       search,
       toggleLeftDrawer,
+      miniState: ref(true),
       links1: [
         { icon: "home", text: "Home" },
         { icon: "whatshot", text: "Trending" },
@@ -314,7 +320,6 @@ export default defineComponent({
       ],
     };
   },
-  created() {},
 });
 </script>
 

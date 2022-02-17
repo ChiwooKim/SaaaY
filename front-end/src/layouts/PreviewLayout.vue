@@ -51,7 +51,14 @@
           >
             <q-tooltip>Messages</q-tooltip>
           </q-btn>
-          <q-btn round flat href="/#/signin">
+
+          <q-btn v-if="logIn === 'signin'" round flat href="/#/signin">
+            <q-avatar size="26px">
+              <img src="images/blank-profile-picture.png" />
+            </q-avatar>
+            <q-tooltip>Account</q-tooltip>
+          </q-btn>
+          <q-btn v-else round flat href="/#/main">
             <q-avatar size="26px">
               <img src="images/blank-profile-picture.png" />
             </q-avatar>
@@ -68,15 +75,18 @@
 </template>
 
 <script>
-import { fabYoutube } from '@quasar/extras/fontawesome-v5';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from "vue";
+import { useStore } from "src/store";
 
 export default defineComponent({
-  name: 'MyLayout',
+  name: "MyLayout",
   setup() {
-    return {
-      fabYoutube,
-    };
+    const $store = useStore();
+
+    const logIn = computed(() => {
+      return $store.state.signin.message;
+    });
+    return { logIn };
   },
 });
 </script>

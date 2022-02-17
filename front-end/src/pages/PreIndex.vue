@@ -9,13 +9,25 @@
         </div>
       </div>
       <div class="title">
-        <a href="#/main" class="btn btn--brown">입장하기</a>
+        <a
+          v-if="logIn === 'main'"
+          href="#/main"
+          @click="clickon"
+          class="btn btn--brown"
+          >입장하기</a
+        >
+        <a v-else href="#/signin" class="btn btn--brown" @click="clickon"
+          >로그인</a
+        >
       </div>
     </div>
     <!--DESCRIPTIONS-->
     <div class="description img_2 scroll-spy">
       <div class="title">
-        <a href="#/main" class="btn btn--brown">입장하기</a>
+        <a v-if="logIn === 'main'" href="#/main" class="btn btn--brown"
+          >입장하기</a
+        >
+        <a v-else href="#/signin" class="btn btn--brown">로그인</a>
       </div>
       <div class="text-group">
         <div class="title back-to-position to-left delay-0">
@@ -34,16 +46,33 @@
         </div>
       </div>
       <div class="title">
-        <a href="#/main" class="btn btn--brown">입장하기</a>
+        <a v-if="logIn === 'main'" href="#/main" class="btn btn--brown"
+          >입장하기</a
+        >
+        <a v-else href="#/signin" class="btn btn--brown">로그인</a>
       </div>
     </div>
   </section>
 </template>
 
 <script>
+import { computed, defineComponent } from "vue";
+import { useStore } from "src/store";
 import ScrollMagic from "scrollmagic";
 
-export default {
+export default defineComponent({
+  setup() {
+    const $store = useStore();
+
+    const logIn = computed(() => {
+      return $store.state.signin.message;
+    });
+
+    function clickcon() {
+      console.log($store.state.signin.message);
+    }
+    return { logIn, clickcon };
+  },
   mounted() {
     //  * 요소가 화면에 보여짐 여부에 따른 요소 관리
     // 관리할 요소들 검색!
@@ -59,7 +88,7 @@ export default {
         .addTo(new ScrollMagic.Controller()); // 컨트롤러에 장면을 할당(필수!)
     });
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
