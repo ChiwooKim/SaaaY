@@ -54,7 +54,7 @@ export default {
     const getRoom = async (index) => {
       // $store.dispatch("room/setIndex", index);
       // $store.
-      await $store.dispatch("room/getRoom", index);
+      
       await router.push(`/main/${index}`);
     };
 
