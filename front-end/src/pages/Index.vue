@@ -71,9 +71,9 @@
           />
         </div>
       </div>
-      <div id="main-video" class="col-md-6">
+      <!-- <div id="main-video" class="col-md-6">
         <user-video :stream-manager="mainStreamManager" />
-      </div>
+      </div> -->
       <div id="video-container" class="col-md-6">
         <user-video
           :stream-manager="publisher"
@@ -101,7 +101,7 @@ import { computed } from "vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":3333";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {

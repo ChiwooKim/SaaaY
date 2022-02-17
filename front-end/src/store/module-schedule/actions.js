@@ -21,7 +21,7 @@ export async function deleteEvent({}, event) {
   const accessToken = Cookies.get("access_token");
   await axios({
     method: "delete",
-    url: "http://localhost:3000/schedule/delete",
+    url: "http://i6b203.p.ssafy.io:3000/schedule/delete",
     data: event,
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -32,26 +32,26 @@ export async function deleteEvent({}, event) {
 export async function createEvent({ commit }, event) {
   const accessToken = Cookies.get("access_token");
   console.log(event);
-  await axios({
-    method: "post",
-    url: "http://localhost:3000/schedule/create",
-    data: event,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  }).then((res) => {
-    commit("CREATE_EVENT", res.data);
-  });
+  api
+    .post("/schedule/create", event, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((res) => {
+      commit("CREATE_EVENT", res.data);
+    });
 }
 
 export async function updateEvent({}, event) {
   const accessToken = Cookies.get("access_token");
-  await axios({
-    method: "put",
-    url: "http://localhost:3000/schedule/update",
-    data: event,
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  api
+    .put("/schedule/update", event, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    .then((res) => {
+      commit("CREATE_EVENT", res.data);
+    });
 }

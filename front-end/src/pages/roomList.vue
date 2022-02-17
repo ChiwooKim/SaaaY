@@ -88,7 +88,7 @@ export default {
           //vuex에서 방만들어줌
           $store.dispatch("room/createRoom", { room, accessToken });
           //rooms 다시받아옴
-          loadRoomList;
+          loadRoomList();
         })
         .onCancel(() => {
           // console.log(">>>> Cancel");
