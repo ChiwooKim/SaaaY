@@ -1,8 +1,15 @@
 <template>
   <div>
-    <q-btn label="방만들기" color="primary" @click="prompt" />
+    <q-btn
+      icon="house"
+      label="방만들기"
+      stack
+      glossy
+      color="primary"
+      @click="prompt"
+    />
 
-    <div class="q-pa-md row items-start q-gutter-md">
+    <div class="q-pa-md row items-start q-gutter-md" id="card">
       <div v-for="(room, index) in rooms" :key="index">
         <q-card class="my-card">
           <q-card-section
@@ -12,6 +19,7 @@
               index % 2 == 0 ? 'bg-primary text-white' : 'bg-purple text-white',
             ]"
           >
+            <q-icon name="room service" />
             <div class="text-h6">{{ room.roomName }}</div>
             <div class="text-subtitle2">by {{ room.moderator[0] }}</div>
           </q-card-section>
@@ -19,7 +27,7 @@
           <q-separator />
 
           <q-card-actions align="right">
-            <q-btn @click="getRoom(index)">방 참가하기</q-btn>
+            <q-btn color="secondary" @click="getRoom(index)">방 참가하기</q-btn>
           </q-card-actions>
         </q-card>
       </div>
@@ -110,3 +118,10 @@ export default {
   }, // end export default
 };
 </script>
+
+<style>
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+#card {
+  font-family: "Noto Sans KR", cursive;
+}
+</style>

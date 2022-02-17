@@ -5,7 +5,7 @@
         <img src="resources/images/openvidu_grey_bg_transp_cropped.png" />
       </div>
       <div id="join-dialog" class="jumbotron vertical-center">
-        <h1>Join a video session</h1>
+        <h1>방에 참가하시겠습니까?</h1>
         <div class="form-group">
           <p>
             <label>Participant</label>
@@ -28,7 +28,10 @@
             /> -->
           </p>
           <p class="text-center">
-            <button class="btn btn-lg btn-success" @click="joinSession()">
+            <button
+              class="btn btn-lg btn-success btn-block"
+              @click="joinSession()"
+            >
               Join!
             </button>
           </p>

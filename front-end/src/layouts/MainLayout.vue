@@ -74,7 +74,7 @@
             @click="showNotif()"
             href="/#/roomList"
           >
-            <q-tooltip>Apps</q-tooltip>
+            <q-tooltip>Rooms</q-tooltip>
           </q-btn>
           <q-btn round dense flat color="grey-8" icon="message" href="/#/chat">
             <q-tooltip>Messages</q-tooltip>
