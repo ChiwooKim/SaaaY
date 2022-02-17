@@ -11,7 +11,7 @@
       <div class="title">
         <a
           v-if="logIn === 'main'"
-          href="#/main"
+          href="#/roomList"
           @click="clickon"
           class="btn btn--brown"
           >입장하기</a
@@ -24,7 +24,7 @@
     <!--DESCRIPTIONS-->
     <div class="description img_2 scroll-spy">
       <div class="title">
-        <a v-if="logIn === 'main'" href="#/main" class="btn btn--brown"
+        <a v-if="logIn === 'main'" href="#/roomList" class="btn btn--brown"
           >입장하기</a
         >
         <a v-else href="#/signin" class="btn btn--brown">로그인</a>
@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="title">
-        <a v-if="logIn === 'main'" href="#/main" class="btn btn--brown"
+        <a v-if="logIn === 'main'" href="#/roomList" class="btn btn--brown"
           >입장하기</a
         >
         <a v-else href="#/signin" class="btn btn--brown">로그인</a>

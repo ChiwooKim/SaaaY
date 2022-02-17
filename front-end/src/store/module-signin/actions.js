@@ -14,7 +14,7 @@ export function authenticate({ commit }, user) {
     .then(() => api.post("/user/email", user))
     .then((response) => {
       commit("authenticate", response.data);
-      window.location.href = '#/main';
+      window.location.href = "#/roomList";
     })
     .catch((err) => {
       console.log(err);

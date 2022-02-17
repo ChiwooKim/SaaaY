@@ -17,7 +17,7 @@
           no-wrap
           class="q-ml-xs"
           v-if="$q.screen.gt.xs"
-          href="/#/main"
+          href="/#/roomList"
         >
           <q-icon name="img:images/logo.png" size="50px" />
           <q-toolbar-title shrink class="text-weight-bold">
@@ -107,7 +107,11 @@
                   </q-item-section>
                 </q-item>
                 <q-separator />
-                <q-item clickable class="GL__menu-link" to="profile">
+                <q-item
+                  clickable
+                  class="GL__menu-link"
+                  :to="`/profile/${myId}`"
+                >
                   <q-item-section>Your profile</q-item-section>
                 </q-item>
                 <q-separator />
@@ -117,7 +121,7 @@
                 <q-item clickable class="GL__menu-link">
                   <q-item-section>Settings</q-item-section>
                 </q-item>
-                <q-item clickable class="GL__menu-link" to="/">
+                <q-item clickable class="GL__menu-link" @click="logout">
                   <q-item-section>Sign out</q-item-section>
                 </q-item>
               </q-list>
@@ -227,8 +231,9 @@
 import { ref, watch } from "vue";
 import { fabYoutube } from "@quasar/extras/fontawesome-v5";
 import { defineComponent } from "vue";
-import { useQuasar } from "quasar";
+import { useQuasar, Cookies } from "quasar";
 import { useStore } from "src/store";
+import { useRouter } from "vue-router";
 // import { watch } from 'vue';
 
 // import { Notify } from 'quasar';
@@ -244,6 +249,30 @@ export default defineComponent({
   setup() {
     const $q = useQuasar();
     const leftDrawerOpen = ref(false);
+    const router = useRouter();
+    let myId;
+
+    const accessToken = Cookies.get("access_token");
+    if (accessToken) {
+      const base64Url = accessToken.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+
+      const data = JSON.parse(jsonPayload);
+      myId = data.id;
+    }
+
+    const logout = () => {
+      Cookies.remove("access_token");
+      router.push("/");
+    };
 
     const search = ref("");
     const $store = useStore();
@@ -277,9 +306,11 @@ export default defineComponent({
       showNotif,
 
       fabYoutube,
+      myId,
       leftDrawerOpen,
       search,
       toggleLeftDrawer,
+      logout,
       miniState: ref(true),
       links1: [
         { icon: "home", text: "Home" },

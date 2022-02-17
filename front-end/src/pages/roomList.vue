@@ -1,27 +1,31 @@
 <template>
-  <div>
-    <q-btn label="방만들기" color="primary" @click="prompt" />
+  <div class="row q-mt-xl">
+    <div class="col-10 offset-1">
+      <q-btn label="방만들기" color="primary" @click="prompt" />
 
-    <div class="q-pa-md row items-start q-gutter-md">
-      <div v-for="(room, index) in rooms" :key="index">
-        <q-card class="my-card">
-          <q-card-section
-            class="bg-primary text-white"
-            :class="[
-              fontTheme,
-              index % 2 == 0 ? 'bg-primary text-white' : 'bg-purple text-white',
-            ]"
-          >
-            <div class="text-h6">{{ room.roomName }}</div>
-            <div class="text-subtitle2">by {{ room.moderator[0] }}</div>
-          </q-card-section>
+      <div class="q-pa-md row items-start q-gutter-md">
+        <div v-for="(room, index) in rooms" :key="index">
+          <q-card class="my-card">
+            <q-card-section
+              class="bg-primary text-white"
+              :class="[
+                fontTheme,
+                index % 2 == 0
+                  ? 'bg-primary text-white'
+                  : 'bg-purple text-white',
+              ]"
+            >
+              <div class="text-h6">{{ room.roomName }}</div>
+              <div class="text-subtitle2">by {{ room.moderator[0] }}</div>
+            </q-card-section>
 
-          <q-separator />
+            <q-separator />
 
-          <q-card-actions align="right">
-            <q-btn @click="getRoom(index)">방 참가하기</q-btn>
-          </q-card-actions>
-        </q-card>
+            <q-card-actions align="right">
+              <q-btn @click="getRoom(index)">방 참가하기</q-btn>
+            </q-card-actions>
+          </q-card>
+        </div>
       </div>
     </div>
   </div>
