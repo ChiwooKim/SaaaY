@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,31 +9,46 @@ import {
   Patch,
   Post,
   Res,
+  UseGuards,
+  Headers,
 } from '@nestjs/common';
 
 import { Response } from 'express';
 import { Room } from 'src/models/RoomModel';
-
 import { RoomService } from '../services/room.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('/room')
 export class RoomController {
-  constructor(private readonly roomService: RoomService) {}
+  constructor(
+    private readonly roomService: RoomService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
-  createRoom(
+  @UseGuards(JwtAuthGuard)
+  async createRoom(
     @Body()
     RoomDTO: Room,
     @Res() res: Response,
+    @Headers('Authorization') accessToken,
   ) {
-    const room = this.roomService.createRoom(
+    const payload = await this.authService.verifyUser(accessToken);
+    const room = await this.roomService.createRoom(
       RoomDTO.roomName,
       RoomDTO.category,
-      RoomDTO.moderator,
+      [payload.email],
       RoomDTO.notice,
       RoomDTO.participates,
     );
-    res.status(HttpStatus.CREATED).json({ message: 'RoomCreated', room: room });
+    if (room) {
+      res
+        .status(HttpStatus.CREATED)
+        .json({ message: 'RoomCreated', room: room });
+    } else {
+      throw new BadRequestException('방생성에 실패하였습니다');
+    }
   }
 
   @Get('/list')

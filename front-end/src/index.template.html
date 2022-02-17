@@ -1,82 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>SAAAY</title>
 
-    <meta charset="utf-8" />
-    <meta name="description" content="<%= productDescription %>" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" />
-    <meta
-      name="viewport"
-      content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (ctx.mode.cordova || ctx.mode.capacitor) { %>, viewport-fit=cover<% } %>"
-    />
+<head>
+  <title>
+    <%= productName %>
+  </title>
 
-    <!-- 오픈 그래프(The Open Graph protocol) -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Saaay" />
-    <meta property="og:title" content="Saaay" />
-    <meta
-      property="og:description"
-      content="Share Anyting, Anytime, Anywhere Yours"
-    />
-    <meta property="og:image" content="./images/linkedin_banner_image_2.jpg" />
-    <!-- 수정 -->
-    <meta property="og:url" content="http://localhost:8080/#/" />
+  <meta charset="utf-8" />
+  <meta name="description" content="<%= productDescription %>" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+  <meta name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (ctx.mode.cordova || ctx.mode.capacitor) { %>, viewport-fit=cover<% } %>" />
 
-    <meta property="twitter:card" content="summary" />
-    <meta property="twitter:site" content="Saaay" />
-    <meta property="twitter:title" content="Saaay" />
-    <meta
-      property="twitter:description"
-      content="Share Anyting, Anytime, Anywhere Yours"
-    />
-    <meta
-      property="twitter:image"
-      content="./images/linkedin_banner_image_2.jpg"
-    />
-    <!-- 수정 -->
-    <meta property="twitter:url" content="http://localhost:8080/#/" />
+  <link rel="icon" type="image/png" sizes="128x128" href="icons/favicon-128x128.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png" />
+  <link rel="icon" type="image/ico" href="favicon.ico" />
+</head>
 
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="128x128"
-      href="icons/favicon-128x128.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="96x96"
-      href="icons/favicon-96x96.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="icons/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="icons/favicon-16x16.png"
-    />
+<body>
+  <!-- DO NOT touch the following DIV -->
+  <div id="q-app"></div>
+</body>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/ico" href="favicon.ico" />
-    <!-- 글꼴 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- DO NOT touch the following DIV -->
-    <div id="q-app"></div>
-  </body>
 </html>
-
-<style></style>

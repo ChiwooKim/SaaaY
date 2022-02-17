@@ -57,25 +57,28 @@
   </div>
 </template>
 
-<script lang="ts">
-import { ref } from 'vue';
-import { Cookies, useQuasar } from 'quasar';
-import { api } from 'src/boot/axios';
-import { AxiosResponse } from 'axios';
+<script>
+import { ref } from "vue";
+import { Cookies, useQuasar } from "quasar";
+import { api } from "src/boot/axios";
+import { AxiosResponse } from "axios";
+import { useStore } from "src/store";
+import { useRouter } from "vue-router";
 
 export default {
   created() {
-    const value = Cookies.get('access_token');
+    const value = Cookies.get("access_token");
     if (value) {
-      
     }
   },
   setup() {
     const email = ref(null);
     const password = ref(null);
-    const $q = useQuasar();
     const name = ref(null);
     const age = ref(null);
+    const $store = useStore();
+    const $q = useQuasar();
+    const router = useRouter();
 
     return {
       email,
@@ -88,26 +91,40 @@ export default {
         password.value = null;
       },
 
-      onSubmit() {
+      async onSubmit() {
         const user = {
           email: email.value,
           password: password.value,
         };
-        api
-          .post('/user/login', user)
-          .then((response: AxiosResponse<{ access_token: string }>) => {
-            Cookies.set('access_token', response.data.access_token, {
-              expires: '1d',
-            });
-          })
-          .catch(() => {
-            $q.notify({
-              color: 'red-5',
-              textColor: 'white',
-              icon: 'warning',
-              message: 'Check Your Email or Password',
-            });
-          });
+        $store
+          .dispatch("signin/authenticate", user)
+          .catch(console.log);
+          /**
+           * () => {
+      Notify.create({
+        color: "red-5",
+        textColor: "white",
+        icon: "warning",
+        message: "Check Your Email or Password",
+      });
+    }
+           */
+        // api
+        //   .post("/user/login", user)
+        //   .then((response) => {
+        //     Cookies.set("access_token", response.data.access_token, {
+        //       expires: "1d",
+        //     });
+        //     router.push("main");
+        //   })
+        //   .catch(() => {
+        //     $q.notify({
+        //       color: "red-5",
+        //       textColor: "white",
+        //       icon: "warning",
+        //       message: "Check Your Email or Password",
+        //     });
+        //   });
 
         // $q.notify({
         //   color: 'green-4',

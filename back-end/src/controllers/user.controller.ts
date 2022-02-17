@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   HttpStatus,
+  Logger,
   Param,
   Patch,
   Post,
@@ -20,6 +21,7 @@ import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { ResourceError } from 'src/error/resource.error';
 import { UserDto } from 'src/models/user.dto';
 import { UserService } from 'src/services/user.service';
+import { AccountService } from '../services/account.service';
 
 // TODO : https://docs.nestjs.com/controllers https://wikidocs.net/148192
 
@@ -28,6 +30,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    private readonly accountService: AccountService,
   ) {}
 
   @Get('/name/:userName')
@@ -48,7 +51,7 @@ export class UserController {
   @Post('/email')
   async searchEmail(@Body() params: { email: string }, @Res() res: Response) {
     try {
-      const userDto = await this.userService.findUserByEmail(params.email);
+      const userDto = await this.findByEmail(params.email);
       res.status(HttpStatus.OK).json(userDto);
     } catch (err) {
       console.log(err);
@@ -60,6 +63,17 @@ export class UserController {
     }
   }
 
+  private async findByEmail(email: string) {
+    const userDto = await this.userService.findUserByEmail(email);
+    userDto.follower = await (
+      await this.accountService.getFollowerList(userDto.id)
+    ).map((r) => r.get('target').properties);
+    userDto.following = await (
+      await this.accountService.getFollowingList(userDto.id)
+    ).map((r) => r.get('target').properties);
+    return userDto;
+  }
+
   @Post('/signup')
   async signup(@Body() userDto: UserDto, @Res() res: Response) {
     console.log('create user :', userDto);
@@ -67,7 +81,7 @@ export class UserController {
       const newUser = await this.userService.createUser(userDto);
       res.status(HttpStatus.CREATED).json(newUser).send();
     } catch (err) {
-      console.log(err);
+      Logger.error(err);
       res.status(HttpStatus.BAD_GATEWAY).send();
     }
   }
@@ -76,7 +90,25 @@ export class UserController {
   @Post('/login')
   async login(@Body() userDto: UserDto) {
     console.log('auth login :', userDto);
-    return this.authService.login(userDto);
+    const user = await this.userService.findUserByEmail(userDto.email);
+    console.log(user);
+    return this.authService.login(user);
+  }
+
+  @Get('/profile')
+  @UseGuards(JwtAuthGuard)
+  async getProfile(
+    @Headers('Authorization') accessToken,
+    @Res() res: Response,
+  ) {
+    try {
+      const user = await this.authService.verifyUser(accessToken);
+      const userDto = await this.findByEmail(user.email);
+      res.status(HttpStatus.OK).json(userDto);
+    } catch (err) {
+      Logger.error(err);
+      res.status(HttpStatus.BAD_GATEWAY).send();
+    }
   }
 
   @Put('/profile')
@@ -87,7 +119,8 @@ export class UserController {
       const updatedUser = await this.userService.editProfile(userDto);
       res.status(HttpStatus.OK).json(updatedUser);
     } catch (err) {
-      console.log(err);
+      Logger.error(err);
+      res.status(HttpStatus.BAD_GATEWAY).send();
     }
   }
 
@@ -99,15 +132,31 @@ export class UserController {
       await this.userService.editPassword(userDto);
       res.status(HttpStatus.OK).send();
     } catch (err) {
-      console.log(err);
+      Logger.error(err);
+      res.status(HttpStatus.BAD_GATEWAY).send();
     }
   }
 
   @Get('/verify')
   async verify(@Headers('Authorization') accessToken, @Res() res: Response) {
-    console.log(accessToken);
-    const user = await this.authService.verifyUser(accessToken);
-    console.log(user.email);
-    if (user) res.status(HttpStatus.OK).json({ message: '' });
+    console.log('verify user by Access Token');
+    const result = await this.authService.verifyUser(accessToken);
+    if (result) {
+      const user = await this.findByEmail(result.email);
+      res.status(HttpStatus.OK).json(user);
+    }
+  }
+
+  @Get('/id/:userId')
+  async getUser(@Param('userId') userId: string, @Res() res: Response) {
+    try {
+      const user = await this.userService.findUser(userId);
+      const userDto = await this.findByEmail(user.email);
+      userDto.id = user.id;
+      res.status(HttpStatus.OK).json(userDto);
+    } catch (err) {
+      res.status(HttpStatus.BAD_GATEWAY).send();
+      Logger.error(err);
+    }
   }
 }

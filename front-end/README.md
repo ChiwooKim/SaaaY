@@ -1,11 +1,11 @@
-# Quasar App (quasar-cli)
+# Quasar App (front-end)
 
 A Quasar Framework app
 
 ## Install the dependencies
 
 ```bash
-yarn
+npm install
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
@@ -17,13 +17,13 @@ quasar dev
 ### Lint the files
 
 ```bash
-yarn lint
+npm run lint
 ```
 
 ### Format the files
 
 ```bash
-yarn format
+npm run format
 ```
 
 ### Build the app for production
