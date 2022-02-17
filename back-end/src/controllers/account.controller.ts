@@ -3,23 +3,25 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpStatus,
   Param,
   Post,
-  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AccountService } from '../services/account.service';
 import { UserService } from 'src/services/user.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('/accounts')
 export class AccountController {
   constructor(
     private readonly accountService: AccountService,
     private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) {}
 
   @Get(':targetId/owner')
@@ -63,19 +65,10 @@ export class AccountController {
   async addMyFollowingList(
     @Param('targetId') targetId: string,
     @Res() res: Response,
-    @Req() request: Request,
+    @Headers('Authorization') accessToken,
   ) {
-    let user;
-    for (const req of request.rawHeaders) {
-      if (req.includes('Bearer')) {
-        const payload = JSON.parse(
-          Buffer.from(req.split('.')[1], 'base64').toString(),
-        );
-        user = await this.userService.findUserByEmail(payload.email);
-        break;
-      }
-    }
-    console.log(user);
+    const payload = await this.authService.verifyUser(accessToken);
+    const user = await this.userService.findUserByEmail(payload.email);
     const result = await this.accountService.addMyFollowingList(
       targetId,
       user.id,
@@ -88,15 +81,17 @@ export class AccountController {
   }
 
   @Delete(':targetId/follow')
+  @UseGuards(JwtAuthGuard)
   async deleteMyFollowingList(
     @Param('targetId') targetId: string,
     @Res() res: Response,
+    @Headers('Authorization') accessToken,
   ) {
-    // 로그인 기능 연결 후 로그인한 유저 Id 로 변경
-    const myId = '4';
+    const payload = await this.authService.verifyUser(accessToken);
+    const user = await this.userService.findUserByEmail(payload.email);
     const result = await this.accountService.deleteMyFollowingList(
       targetId,
-      myId,
+      user.id,
     );
     if (result) {
       res.status(204).send();
@@ -106,13 +101,15 @@ export class AccountController {
   }
 
   @Post(':targetId/block')
+  @UseGuards(JwtAuthGuard)
   async addMyBlockList(
     @Param('targetId') targetId: string,
     @Res() res: Response,
+    @Headers('Authorization') accessToken,
   ) {
-    // 로그인 기능 연결 후 로그인한 유저 Id 로 변경
-    const myId = '4';
-    const result = await this.accountService.addMyBlockList(targetId, myId);
+    const payload = await this.authService.verifyUser(accessToken);
+    const user = await this.userService.findUserByEmail(payload.email);
+    const result = await this.accountService.addMyBlockList(targetId, user.id);
     if (result) {
       res.status(201).send();
     } else {
@@ -121,13 +118,18 @@ export class AccountController {
   }
 
   @Delete(':targetId/block')
+  @UseGuards(JwtAuthGuard)
   async deleteMyBlockList(
     @Param('targetId') targetId: string,
     @Res() res: Response,
+    @Headers('Authorization') accessToken,
   ) {
-    // 로그인 기능 연결 후 로그인한 유저 Id 로 변경
-    const myId = '4';
-    const result = await this.accountService.deleteMyBlockList(targetId, myId);
+    const payload = await this.authService.verifyUser(accessToken);
+    const user = await this.userService.findUserByEmail(payload.email);
+    const result = await this.accountService.deleteMyBlockList(
+      targetId,
+      user.id,
+    );
     if (result) {
       res.status(204).send();
     } else {
@@ -136,11 +138,27 @@ export class AccountController {
   }
 
   @Get(':targetId/blocklist')
+  @UseGuards(JwtAuthGuard)
   async getBlockList(
     @Param('targetId') targetId: string,
     @Res() res: Response,
+    @Headers('Authorization') accessToken,
   ) {
-    const blockList = await this.accountService.getBlockList(targetId);
-    res.status(HttpStatus.OK).json(blockList);
+    const payload = await this.authService.verifyUser(accessToken);
+    const user = await this.userService.findUserByEmail(payload.email);
+    if (targetId === user.id.toString()) {
+      const blockList = await this.accountService.getBlockList(targetId);
+      res.status(HttpStatus.OK).json(blockList);
+    } else {
+      res.status(403).send();
+    }
+  }
+
+  @Get('id')
+  @UseGuards(JwtAuthGuard)
+  async getUserId(@Res() res: Response, @Headers('Authorization') accessToken) {
+    const payload = await this.authService.verifyUser(accessToken);
+    const user = await this.userService.findUserByEmail(payload.email);
+    res.status(HttpStatus.OK).json(user);
   }
 }

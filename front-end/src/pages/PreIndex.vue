@@ -9,13 +9,25 @@
         </div>
       </div>
       <div class="title">
-        <a href="#/main" class="btn btn--brown">입장하기</a>
+        <a
+          v-if="logIn === 'main'"
+          href="#/roomList"
+          @click="clickon"
+          class="btn btn--brown"
+          >입장하기</a
+        >
+        <a v-else href="#/signin" class="btn btn--brown" @click="clickon"
+          >로그인</a
+        >
       </div>
     </div>
     <!--DESCRIPTIONS-->
     <div class="description img_2 scroll-spy">
       <div class="title">
-        <a href="#/main" class="btn btn--brown">입장하기</a>
+        <a v-if="logIn === 'main'" href="#/roomList" class="btn btn--brown"
+          >입장하기</a
+        >
+        <a v-else href="#/signin" class="btn btn--brown">로그인</a>
       </div>
       <div class="text-group">
         <div class="title back-to-position to-left delay-0">
@@ -34,21 +46,37 @@
         </div>
       </div>
       <div class="title">
-        <a href="#/main" class="btn btn--brown">입장하기</a>
+        <a v-if="logIn === 'main'" href="#/roomList" class="btn btn--brown"
+          >입장하기</a
+        >
+        <a v-else href="#/signin" class="btn btn--brown">로그인</a>
       </div>
     </div>
   </section>
 </template>
 
-<script lang="ts">
-import ScrollMagic from 'scrollmagic';
+<script>
+import { computed, defineComponent } from "vue";
+import { useStore } from "src/store";
+import ScrollMagic from "scrollmagic";
 
-export default {
+export default defineComponent({
+  setup() {
+    const $store = useStore();
+
+    const logIn = computed(() => {
+      return $store.state.signin.message;
+    });
+
+    function clickcon() {
+      console.log($store.state.signin.message);
+    }
+    return { logIn, clickcon };
+  },
   mounted() {
     //  * 요소가 화면에 보여짐 여부에 따른 요소 관리
     // 관리할 요소들 검색!
-    const spyEls = document.querySelectorAll('.description.scroll-spy');
-    console.log(spyEls);
+    const spyEls = document.querySelectorAll(".description.scroll-spy");
     // 요소들 반복 처리!
     spyEls.forEach(function (spyEl) {
       new ScrollMagic.Scene({
@@ -56,18 +84,18 @@ export default {
         triggerElement: spyEl, // 보여짐 여부를 감시할 요소를 지정
         triggerHook: 0.7, // 화면의 80% 지점에서 보여짐 여부 감시
       })
-        .setClassToggle(spyEl, 'show') // 요소가 화면에 보이면 show 클래스 추가
+        .setClassToggle(spyEl, "show") // 요소가 화면에 보이면 show 클래스 추가
         .addTo(new ScrollMagic.Controller()); // 컨트롤러에 장면을 할당(필수!)
     });
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>
 section {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   .btn {
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: "Nanum Gothic", sans-serif;
   }
 }
 
@@ -111,13 +139,13 @@ section {
   align-items: center;
   padding: 150px;
   &.img_1 {
-    background-image: url('../../public/images/description_bg1.jpg');
+    background-image: url("../../public/images/description_bg1.jpg");
   }
   &.img_2 {
-    background-image: url('../../public/images/description_bg2.jpg');
+    background-image: url("../../public/images/description_bg2.jpg");
   }
   &.img_3 {
-    background-image: url('../../public/images/description_bg3.jpg');
+    background-image: url("../../public/images/description_bg3.jpg");
   }
   .text-group {
     display: flex;

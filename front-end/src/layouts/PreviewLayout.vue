@@ -8,7 +8,7 @@
     >
       <q-toolbar>
         <!-- 왼쪽 로고 -->
-        <q-btn flat no-caps no-wrap class="q-ml-xs">
+        <q-btn flat no-caps no-wrap class="q-ml-xs" href="/">
           <q-icon name="img:images/logo.png" size="50px" />
           <q-toolbar-title shrink class="text-weight-bold">
             Say
@@ -51,13 +51,16 @@
           >
             <q-tooltip>Messages</q-tooltip>
           </q-btn>
-          <q-btn round dense flat color="grey-8" icon="notifications">
-            <q-badge color="red" text-color="white" floating> 2 </q-badge>
-            <q-tooltip>Notifications</q-tooltip>
-          </q-btn>
-          <q-btn round flat>
+
+          <q-btn v-if="logIn === 'signin'" round flat href="/#/signin">
             <q-avatar size="26px">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              <img src="images/blank-profile-picture.png" />
+            </q-avatar>
+            <q-tooltip>Account</q-tooltip>
+          </q-btn>
+          <q-btn v-else round flat href="/#/main">
+            <q-avatar size="26px">
+              <img src="images/blank-profile-picture.png" />
             </q-avatar>
             <q-tooltip>Account</q-tooltip>
           </q-btn>
@@ -72,15 +75,18 @@
 </template>
 
 <script>
-import { fabYoutube } from '@quasar/extras/fontawesome-v5';
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from "vue";
+import { useStore } from "src/store";
 
 export default defineComponent({
-  name: 'MyLayout',
+  name: "MyLayout",
   setup() {
-    return {
-      fabYoutube,
-    };
+    const $store = useStore();
+
+    const logIn = computed(() => {
+      return $store.state.signin.message;
+    });
+    return { logIn };
   },
 });
 </script>

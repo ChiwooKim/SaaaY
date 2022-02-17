@@ -4,6 +4,15 @@ import { UserDto } from 'src/models/user.dto';
 import { executeQuery, stringify } from './connection-pools/neo4j.db';
 
 export class UserRepository {
+  async findById(userId: string) {
+    const result = await executeQuery<Record>(
+      `MATCH (user) WHERE id(user) = ${userId} RETURN user`,
+    );
+    if (result.length == 0) throw new ResourceError('아이디 없음');
+    const userDto = result[0].get('user').properties;
+    userDto.id = userId;
+    return userDto;
+  }
   async updatePassword(userDto: UserDto): Promise<UserDto> {
     const result = await executeQuery<Record>(
       `match (user:User {email: '${userDto.email}'})
