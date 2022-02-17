@@ -133,19 +133,16 @@
         <q-scroll-area style="height: calc(100% - 100px)">
           <q-list>
             <q-item
-              v-for="(follow, index) in follows"
+              v-for="(User, index) in connecUsers"
               :key="index"
               clickable
               v-ripple
-              @click="
-                setCurrentConversation(index), leaveSession(), joinSession()
-              "
             >
               <q-item-section avatar>
                 <q-avatar>
                   <!-- 수정사항 -->
                   <img
-                    src="images/blank-profile-picture.png"
+                    :src="User.clientImg"
                     alt="profile-image"
                     class="profile q-mb-sm"
                   />
@@ -154,7 +151,7 @@
 
               <q-item-section>
                 <q-item-label lines="1">
-                  {{ follow._fields[0].properties.username }}
+                  {{ User.clientData }}
                 </q-item-label>
                 <q-item-label class="conversation__summary" caption>
                   <!-- 삭제 -->
@@ -212,6 +209,7 @@ import { useStore } from "src/store";
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 // import UserVideo from "src/components/UserVideo";
+import { faker } from "https://cdn.skypack.dev/@faker-js/faker";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
@@ -231,24 +229,28 @@ export default {
       isVideo: true,
       isAudio: true,
 
-      myName: "",
+      myName: faker.name.findName(),
+      myImg: faker.image.avatar(),
+      myConnectionId: "",
       mySessionId: "SessionA",
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      myUserName: faker.name.findName(),
     };
+  },
+  computed: {
+    connecUsers() {
+      let users = [];
+      this.session.remoteConnections.forEach((element) => {
+        console.log(element);
+
+        if (!element) return;
+        users.push(JSON.parse(element.data));
+      });
+      console.log("aa");
+      return users;
+    },
   },
   setup() {
     const $store = useStore();
-
-    $store.dispatch("account/getFollowerList", 1).catch(console.log);
-    $store.dispatch("account/getFollowingList", 1).catch(console.log);
-
-    const follows = computed(() =>
-      Object.assign(
-        {},
-        $store.state.account.followers,
-        $store.state.account.followings
-      )
-    );
 
     const $q = useQuasar();
 
@@ -258,13 +260,6 @@ export default {
     const currentConversationIndex = ref(0);
 
     const userName = ref("");
-    const currentConversation = computed(() => {
-      return Object.assign(
-        {},
-        $store.state.account.followers,
-        $store.state.account.followings
-      )[currentConversationIndex.value]._fields[0].properties.username;
-    });
 
     const style = computed(() => ({
       height: $q.screen.height + "px",
@@ -278,126 +273,23 @@ export default {
       currentConversationIndex.value = index;
     }
 
-    watch(currentConversationIndex, () => {
-      userName.value = Object.assign(
-        {},
-        $store.state.account.followers,
-        $store.state.account.followings
-      )[currentConversationIndex.value]._fields[0].properties.username;
-
-      // 수정사항
-      // 섹션 아이디 변경
-    });
-
     return {
       userName,
-      follows,
+      // follows,
 
       leftDrawerOpen,
       search,
       message,
-      currentConversationIndex,
+      // currentConversationIndex,
 
-      currentConversation,
-      setCurrentConversation,
+      // currentConversation,
+      // setCurrentConversation,
       style,
 
       toggleLeftDrawer,
     };
   },
   methods: {
-    joinSession() {
-      // --- Get an OpenVidu object ---
-      this.OV = new OpenVidu();
-
-      // --- Init a session ---
-      this.session = this.OV.initSession();
-
-      // --- Specify the actions when events take place in the session ---
-
-      // On every new Stream received...
-      this.session.on("streamCreated", ({ stream }) => {
-        const subscriber = this.session.subscribe(stream);
-        this.subscribers.push(subscriber);
-      });
-
-      // On every Stream destroyed...
-      this.session.on("streamDestroyed", ({ stream }) => {
-        const index = this.subscribers.indexOf(stream.streamManager, 0);
-        if (index >= 0) {
-          this.subscribers.splice(index, 1);
-        }
-      });
-
-      // On every asynchronous exception...
-      this.session.on("exception", ({ exception }) => {
-        console.warn(exception);
-      });
-      // --- Connect to the session with a valid user token ---
-
-      // 'getToken' method is simulating what your server-side should do.
-      // 'token' parameter should be retrieved and returned by your own backend
-      this.getToken(this.mySessionId).then((token) => {
-        console.log(token);
-        this.session
-          .connect(token, { clientData: this.myUserName })
-          .then(() => {
-            // --- Get your own camera stream with the desired properties ---
-
-            let publisher = this.OV.initPublisher(undefined, {
-              audioSource: undefined, // The source of audio. If undefined default microphone
-              videoSource: undefined, // The source of video. If undefined default webcam
-              publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-              publishVideo: false, // Whether you want to start publishing with your video enabled or not
-              // resolution: "640x480", // The resolution of your video
-              // frameRate: 30, // The frame rate of your video
-              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-              mirror: false, // Whether to mirror your local video or not
-            });
-
-            this.mainStreamManager = publisher;
-            this.publisher = publisher;
-
-            // --- Publish your stream ---
-
-            this.session.publish(this.publisher);
-          })
-          .catch((error) => {
-            console.log(
-              "There was an error connecting to the session:",
-              error.code,
-              error.message
-            );
-          });
-      });
-
-      window.addEventListener("beforeunload", this.leaveSession);
-
-      this.session.on("signal", (event) => {
-        const chat = event.data;
-        let user = event.from.connectionId;
-
-        const chatData = {
-          userName: user,
-          chat: chat,
-        };
-        this.$store.commit("main/setChatting", chatData);
-      });
-    },
-
-    leaveSession() {
-      // --- Leave the session by calling 'disconnect' method over the Session object ---
-      if (this.session) this.session.disconnect();
-
-      this.session = undefined;
-      this.mainStreamManager = undefined;
-      this.publisher = undefined;
-      this.subscribers = [];
-      this.OV = undefined;
-
-      window.removeEventListener("beforeunload", this.leaveSession);
-    },
-
     updateMainVideoStreamManager(stream) {
       if (this.mainStreamManager === stream) return;
       this.mainStreamManager = stream;
@@ -499,19 +391,118 @@ export default {
           to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
           type: "my-chat", // The type of message (optional)
         })
-        .then((res) => {
-          console.log("Message successfully sent");
-          console.log(res);
-        })
+        .then((res) => {})
         .catch((error) => {
           console.error(error);
         });
-
-      this.$store.commit(
-        "main/setMyName",
-        this.session.connection.connectionId
-      );
+      console.log("this.session");
+      console.log(this.session);
+      console.log("this.session.remoteConnections");
+      console.log(this.session.remoteConnections);
     },
+  },
+  created() {
+    // --- Get an OpenVidu object ---
+    this.OV = new OpenVidu();
+
+    // --- Init a session ---
+    this.session = this.OV.initSession();
+
+    // --- Specify the actions when events take place in the session ---
+
+    // On every new Stream received...
+    this.session.on("streamCreated", ({ stream }) => {
+      const subscriber = this.session.subscribe(stream);
+      this.subscribers.push(subscriber);
+    });
+
+    // On every Stream destroyed...
+    this.session.on("streamDestroyed", ({ stream }) => {
+      const index = this.subscribers.indexOf(stream.streamManager, 0);
+      if (index >= 0) {
+        this.subscribers.splice(index, 1);
+      }
+    });
+
+    // On every asynchronous exception...
+    this.session.on("exception", ({ exception }) => {
+      console.warn(exception);
+    });
+    // --- Connect to the session with a valid user token ---
+
+    // 'getToken' method is simulating what your server-side should do.
+    // 'token' parameter should be retrieved and returned by your own backend
+    this.getToken(this.mySessionId).then((token) => {
+      console.log(token);
+      this.session
+        .connect(token, { clientData: this.myUserName, clientImg: this.myImg })
+        .then(() => {
+          // --- Get your own camera stream with the desired properties ---
+
+          let publisher = this.OV.initPublisher(undefined, {
+            audioSource: undefined, // The source of audio. If undefined default microphone
+            videoSource: undefined, // The source of video. If undefined default webcam
+            publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+            publishVideo: false, // Whether you want to start publishing with your video enabled or not
+            // resolution: "640x480", // The resolution of your video
+            // frameRate: 30, // The frame rate of your video
+            insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+            mirror: false, // Whether to mirror your local video or not
+          });
+
+          this.mainStreamManager = publisher;
+          this.publisher = publisher;
+
+          // --- Publish your stream ---
+
+          this.session.publish(this.publisher);
+          console.log("this.session.connection.connectionId");
+
+          this.myConnectionId = this.session.connection.connectionId;
+          console.log(this.session.connection.connectionId);
+          console.log(this.myName);
+          this.$store.commit("main/setMyconnectionId", {
+            myConnectionId: this.session.connection.connectionId,
+            myFakerName: this.myUserName,
+            myImg: this.myImg,
+          });
+        })
+        .catch((error) => {
+          console.log(
+            "There was an error connecting to the session:",
+            error.code,
+            error.message
+          );
+        });
+    });
+
+    window.addEventListener("beforeunload", this.leaveSession);
+
+    const $store = useStore();
+
+    this.session.on("signal", (event) => {
+      const newMessage = event.data;
+
+      let connectionId = event.from.connectionId;
+      const chatData = {
+        connectionId: connectionId,
+        newMessage: newMessage,
+        img: JSON.parse(event.from.data)["clientImg"],
+      };
+      this.$store.commit("main/setChatting", chatData);
+    });
+  },
+  unmounted() {
+    // --- Leave the session by calling 'disconnect' method over the Session object ---
+    if (this.session) this.session.disconnect();
+
+    this.session = undefined;
+    this.mainStreamManager = undefined;
+    this.publisher = undefined;
+    this.subscribers = [];
+    this.OV = undefined;
+
+    window.removeEventListener("beforeunload", this.leaveSession);
   },
 };
 </script>
