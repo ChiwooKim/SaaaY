@@ -6117,25 +6117,19 @@ vue-loader@17.0.0:
     chalk "^4.1.0"
     hash-sum "^2.0.0"
     loader-utils "^2.0.0"
+<<<<<<< HEAD
+=======
 
 "vue-google-signin-button@^1.0.4":
   "integrity" "sha512-spmf+qPQQ1zAEndDxybYsf22U47eYPuvU9cb1N9YETmPQ4+UBG9ALLxgID1mHkusvBVclRyxmvJc3zc7hD56wg=="
   "resolved" "https://registry.npmjs.org/vue-google-signin-button/-/vue-google-signin-button-1.0.4.tgz"
   "version" "1.0.4"
+>>>>>>> 76d1fed57fa575713f19b468c510510a5c15c7f9
 
-"vue-loader@17.0.0":
-  "integrity" "sha512-OWSXjrzIvbF2LtOUmxT3HYgwwubbfFelN8PAP9R9dwpIkj48TVioHhWWSx7W7fk+iF5cgg3CBJRxwTdtLU4Ecg=="
-  "resolved" "https://registry.npmjs.org/vue-loader/-/vue-loader-17.0.0.tgz"
-  "version" "17.0.0"
-  dependencies:
-    "chalk" "^4.1.0"
-    "hash-sum" "^2.0.0"
-    "loader-utils" "^2.0.0"
-
-"vue-router@^4.0.12":
-  "integrity" "sha512-CPXvfqe+mZLB1kBWssssTiWg4EQERyqJZes7USiqfW9B5N2x+nHlnsM1D3b5CaJ6qgCvMmYJnz+G0iWjNCvXrg=="
-  "resolved" "https://registry.npmjs.org/vue-router/-/vue-router-4.0.12.tgz"
-  "version" "4.0.12"
+vue-router@^4.0.12:
+  version "4.0.12"
+  resolved "https://registry.npmjs.org/vue-router/-/vue-router-4.0.12.tgz"
+  integrity sha512-CPXvfqe+mZLB1kBWssssTiWg4EQERyqJZes7USiqfW9B5N2x+nHlnsM1D3b5CaJ6qgCvMmYJnz+G0iWjNCvXrg==
   dependencies:
     "@vue/devtools-api" "^6.0.0-beta.18"
 
