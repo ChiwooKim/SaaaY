@@ -1,4 +1,4 @@
-# 웹 RTC 프로젝트
+# SaaaY 프로젝트
 
 <!-- 필수 항목 -->
 
@@ -35,7 +35,7 @@
 
   - 채팅
 
-  ![image-20220218114233578](C:\Users\dongh\AppData\Roaming\Typora\typora-user-images\image-20220218114233578.png)
+  ![image-20220218114820330](README.assets/image-20220218114820330.png)
 
   - 그룹 채팅
 
