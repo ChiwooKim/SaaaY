@@ -1,6 +1,9 @@
 export default function () {
   return {
-    myName: "",
+    myConnectionId: "",
+    myFakerName: "",
+    myImg: "",
     chatData: [],
+    user: [],
   };
 }

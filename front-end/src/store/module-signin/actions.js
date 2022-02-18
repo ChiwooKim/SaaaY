@@ -4,6 +4,7 @@ import { api } from "src/boot/axios";
 export function someAction(/* context */) {}
 
 export function authenticate({ commit }, user) {
+  console.log(user);
   api
     .post("/user/login", user)
     .then((response) => {
@@ -14,7 +15,7 @@ export function authenticate({ commit }, user) {
     .then(() => api.post("/user/email", user))
     .then((response) => {
       commit("authenticate", response.data);
-      window.location.href = '#/main';
+      window.location.href = "#/roomList";
     })
     .catch((err) => {
       console.log(err);

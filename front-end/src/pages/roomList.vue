@@ -1,35 +1,31 @@
 <template>
-  <div>
-    <q-btn
-      icon="house"
-      label="방만들기"
-      stack
-      glossy
-      color="primary"
-      @click="prompt"
-    />
+  <div class="row q-mt-xl">
+    <div class="col-10 offset-1">
+      <q-btn label="방만들기" color="primary" @click="prompt" />
 
-    <div class="q-pa-md row items-start q-gutter-md" id="card">
-      <div v-for="(room, index) in rooms" :key="index">
-        <q-card class="my-card">
-          <q-card-section
-            class="bg-primary text-white"
-            :class="[
-              fontTheme,
-              index % 2 == 0 ? 'bg-primary text-white' : 'bg-purple text-white',
-            ]"
-          >
-            <q-icon name="room service" />
-            <div class="text-h6">{{ room.roomName }}</div>
-            <div class="text-subtitle2">by {{ room.moderator[0] }}</div>
-          </q-card-section>
+      <div class="q-pa-md row items-start q-gutter-md">
+        <div v-for="(room, index) in rooms" :key="index">
+          <q-card class="my-card">
+            <q-card-section
+              class="bg-primary text-white"
+              :class="[
+                fontTheme,
+                index % 2 == 0
+                  ? 'bg-primary text-white'
+                  : 'bg-purple text-white',
+              ]"
+            >
+              <div class="text-h6">{{ room.roomName }}</div>
+              <div class="text-subtitle2">by {{ room.moderator[0] }}</div>
+            </q-card-section>
 
-          <q-separator />
+            <q-separator />
 
-          <q-card-actions align="right">
-            <q-btn color="secondary" @click="getRoom(index)">방 참가하기</q-btn>
-          </q-card-actions>
-        </q-card>
+            <q-card-actions align="right">
+              <q-btn @click="getRoom(index)">방 참가하기</q-btn>
+            </q-card-actions>
+          </q-card>
+        </div>
       </div>
     </div>
   </div>
@@ -62,7 +58,7 @@ export default {
     const getRoom = async (index) => {
       // $store.dispatch("room/setIndex", index);
       // $store.
-      
+      await $store.dispatch("room/getRoom", index);
       await router.push(`/main/${index}`);
     };
 
@@ -96,7 +92,7 @@ export default {
           //vuex에서 방만들어줌
           $store.dispatch("room/createRoom", { room, accessToken });
           //rooms 다시받아옴
-          loadRoomList;
+          loadRoomList();
         })
         .onCancel(() => {
           // console.log(">>>> Cancel");
@@ -118,10 +114,3 @@ export default {
   }, // end export default
 };
 </script>
-
-<style>
-@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
-#card {
-  font-family: "Noto Sans KR", cursive;
-}
-</style>

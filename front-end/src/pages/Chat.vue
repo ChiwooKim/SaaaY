@@ -5,20 +5,20 @@
 
       <template v-for="(chat, index) in chats" :key="index">
         <q-chat-message
-          v-if="chat.userName === myName"
+          v-if="chat.connectionId === myConnectionId"
           name="me"
-          avatar="https://cdn.quasar.dev/img/avatar6.jpg"
-          :text="[chat.chat]"
+          :avatar="chat.img"
+          :text="[chat.newMessage]"
           sent
           stamp="10 minutes ago"
         />
         <q-chat-message
           v-else
-          avatar="https://cdn.quasar.dev/img/avatar6.jpg"
-          :text="[chat.chat]"
+          :name="chat.writer"
+          :avatar="chat.img"
+          :text="[chat.newMessage]"
           stamp="7 minutes ago"
         >
-          <template v-slot:name>{{ chat.userName }}</template>
         </q-chat-message>
       </template>
     </div>
@@ -36,10 +36,10 @@ export default defineComponent({
   setup() {
     const $store = useStore();
 
-    const myName = computed(() => $store.state.main.myName);
+    const myConnectionId = computed(() => $store.state.main.myConnectionId);
     const chats = computed(() => $store.state.main.chatData);
     return {
-      myName,
+      myConnectionId,
       chats,
     };
   },
