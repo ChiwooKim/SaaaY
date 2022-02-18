@@ -19,6 +19,7 @@
 ## 프로젝트 소개
 
 - 프로젝트명: 커뮤니티 음성대화 및 영상공유 서비스
+
 - 서비스 특징: 간단하게 참여할 수 있는 주제별 대화 서비스
 
 - 주요 기능
@@ -32,14 +33,18 @@
 
   ![image-20220218112743366](README.assets/image-20220218112743366.png)
 
+  - 채팅
+
+  ![image-20220218114233578](C:\Users\dongh\AppData\Roaming\Typora\typora-user-images\image-20220218114233578.png)
+
   - 그룹 채팅
 
   ![image-20220218112843190](README.assets/image-20220218112843190.png)
 
   - 팔로우 / 차단
-
+  
   ![image-20220218112717727](README.assets/image-20220218112717727.png)
-
+  
 - 주요 기술
   - WebRTC
   - WebSocket
