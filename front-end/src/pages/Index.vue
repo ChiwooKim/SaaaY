@@ -5,10 +5,7 @@
         <h1>Join a {{ roomName }}</h1>
         <div class="form-group row justify-center">
           <p class="text-center">
-            <button
-              class="btn btn-lg btn-success btn-block"
-              @click="joinSession()"
-            >
+            <button class="btn btn-lg btn-success" @click="joinSession()">
               Join!
             </button>
           </p>
@@ -74,9 +71,9 @@
           />
         </div>
       </div>
-      <div id="main-video" class="col-md-6">
+      <!-- <div id="main-video" class="col-md-6">
         <user-video :stream-manager="mainStreamManager" />
-      </div>
+      </div> -->
       <div id="video-container" class="col-md-6">
         <user-video
           :stream-manager="publisher"
@@ -104,7 +101,7 @@ import { computed } from "vue";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":5443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
@@ -239,7 +236,6 @@ export default {
       this.publisher = undefined;
       this.subscribers = [];
       this.OV = undefined;
-
       window.removeEventListener("beforeunload", this.leaveSession);
       this.$router.push("/roomList");
     },
