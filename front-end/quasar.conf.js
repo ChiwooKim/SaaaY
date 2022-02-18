@@ -73,9 +73,9 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       server: {
-        type: "http",
+        type: "https",
       },
-      port: 8080,
+      port: 9090,
       open: true, // opens browser window automatically
     },
 
@@ -97,7 +97,7 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Dialog', 'Notify', 'Cookies',"Notify",],
+      plugins: ["Dialog", "Notify", "Cookies", "Notify"],
     },
 
     // animations: 'all', // --- includes all animations
