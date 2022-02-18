@@ -213,7 +213,7 @@ import { faker } from "https://cdn.skypack.dev/@faker-js/faker";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":5443";
+const OPENVIDU_SERVER_URL = "http://" + location.hostname + ":5443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
