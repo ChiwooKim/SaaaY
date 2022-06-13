@@ -13,11 +13,11 @@
   </q-item>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script>
+import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: 'EssentialLink',
+  name: "EssentialLink",
   props: {
     title: {
       type: String,
@@ -26,17 +26,17 @@ export default defineComponent({
 
     caption: {
       type: String,
-      default: '',
+      default: "",
     },
 
     link: {
       type: String,
-      default: '#',
+      default: "#",
     },
 
     icon: {
       type: String,
-      default: '',
+      default: "",
     },
   },
 });

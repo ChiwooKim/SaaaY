@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { getScheduleList, createSchedule, updateSchedule, deleteSchedule } from '../repositories/schedule.repository'
+import {
+  getScheduleList,
+  createSchedule,
+  updateSchedule,
+  deleteSchedule,
+} from '../repositories/schedule.repository';
 
 @Injectable()
 export class ScheduleService {
@@ -8,18 +13,35 @@ export class ScheduleService {
     return result;
   }
 
-  public async createSchedule(email: string, date: string) {
-    const result = await createSchedule(email, date);
+  public async createSchedule(
+    email: string,
+    id: string,
+    title: string,
+    start: string,
+    end: string,
+    allDay: boolean,
+  ) {
+    const result = await createSchedule(email, id, title, start, end, allDay);
     return result;
   }
 
-  public async updateSchedule(email: string, date: string, update_date: string) {
-    const result = await updateSchedule(email, date, update_date);
+  public async updateSchedule(
+    title: string,
+    start: string,
+    end: string,
+    allDay: boolean,
+  ) {
+    const result = await updateSchedule(title, start, end, allDay);
     return result;
   }
 
-  public async deleteSchedule(email: string, date: string) {
-    const result = await deleteSchedule(email, date);
+  public async deleteSchedule(
+    title: string,
+    start: string,
+    end: string,
+    allDay: boolean,
+  ) {
+    const result = await deleteSchedule(title, start, end, allDay);
     return result;
   }
 }

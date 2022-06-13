@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,18 +9,68 @@ import {
   Patch,
   Post,
   Res,
+  UseGuards,
+  Headers,
 } from '@nestjs/common';
 
 import { Response } from 'express';
-
+import { Room } from 'src/models/RoomModel';
 import { RoomService } from '../services/room.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('/room')
 export class RoomController {
-  constructor(private readonly roomService: RoomService) {}
+  constructor(
+    private readonly roomService: RoomService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post()
-  createRoom(
+  @UseGuards(JwtAuthGuard)
+  async createRoom(
+    @Body()
+    RoomDTO: Room,
+    @Res() res: Response,
+    @Headers('Authorization') accessToken,
+  ) {
+    const payload = await this.authService.verifyUser(accessToken);
+    const room = await this.roomService.createRoom(
+      RoomDTO.roomName,
+      RoomDTO.category,
+      [payload.email],
+      RoomDTO.notice,
+      RoomDTO.participates,
+    );
+    if (room) {
+      res
+        .status(HttpStatus.CREATED)
+        .json({ message: 'RoomCreated', room: room });
+    } else {
+      throw new BadRequestException('방생성에 실패하였습니다');
+    }
+  }
+
+  @Get('/list')
+  getRooms(@Res() res: Response) {
+    console.log('/getRooms');
+    res.status(HttpStatus.OK);
+    const Rooms = this.roomService.getRooms();
+    console.log('rooms : ', Rooms);
+    res.status(HttpStatus.OK).json(Rooms);
+  }
+
+  @Get('/:Id')
+  getRoom(@Param('Id') Id: string, @Res() res: Response) {
+    console.log('/getRoom');
+    res.status(HttpStatus.OK);
+    const Room = this.roomService.getRoom(Id);
+    res.status(HttpStatus.OK).json(Room);
+  }
+
+  @Patch(':Id')
+  updateRoom(
+    @Param('Id') Id: string,
     @Body()
     params: {
       roomName: string;
@@ -30,74 +81,11 @@ export class RoomController {
     },
     @Res() res: Response,
   ) {
-    const room = this.roomService.createRoom(
-      params.roomName,
-      params.category,
-      params.moderator,
-      params.notice,
-      params.participates,
-    );
-    res.status(HttpStatus.CREATED).json({ message: 'RoomCreated', room: room });
+    console.log('updateRoom');
+    const room = this.roomService.updateRoom(Id, params);
+
+    res.status(HttpStatus.OK).json({ message: room });
   }
-
-  @Get('/list')
-  getRooms(@Res() res: Response) {
-    console.log('/getRooms');
-    res.status(HttpStatus.OK);
-    const Rooms = this.roomService.getRooms();
-    console.log('rooms : ', Rooms);
-    res.status(HttpStatus.OK).json(JSON.stringify(Rooms));
-  }
-
-  // getRooms: RequestHandler = (req, res, next) => {
-  //   console.log('getRooms');
-  //   const rooms = roomService.getRooms();
-  //   // console.log(rooms);
-  //   res.json({ rooms: rooms });
-  // };
-
-  // getRoom: RequestHandler<{ id: string }> = (req, res, next) => {
-  //   console.log('getRoom');
-  //   const roomId = req.params.id;
-
-  //   const room = roomService.getRoom(roomId);
-
-  //   res.json({ room: room });
-  // };
-
-  @Get('/:Id')
-  getRoom(@Param('Id') Id: string, @Res() res: Response) {
-    console.log('/getRoom');
-    res.status(HttpStatus.OK);
-    const Room = this.roomService.getRoom(Id);
-    res.status(HttpStatus.OK).json(JSON.stringify(Room));
-  }
-
-  /*
-  export const updateRoom: RequestHandler<{ id: string }> = (req, res, next) => {
-    console.log("updateTodo");
-    const todoId = req.params.id;
-  
-    const updatedText = (req.body as { text: string }).text;
-  
-    console.log("id: ", todoId);
-  
-    const updatedTodo = roomService.updateRoom(todoId, updatedText);
-  
-    res.json({ message: "Updated!", updatedTodo: updatedTodo });
-  };
-  */
-
-  /*
-  deleteRoom: RequestHandler<{ id: string }> = (req, res, next) => {
-    console.log('deleteTodo');
-    const todoId = req.params.id;
-
-    roomService.deleteRoom(todoId);
-
-    res.json({ message: 'Room deleted!' });
-  };
-  */
 
   @Delete('/:Id')
   deleteRoom(@Param('Id') Id: string, @Res() res: Response) {

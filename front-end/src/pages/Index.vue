@@ -1,377 +1,535 @@
 <template>
-  <!--BADGES-->
-  <div class="badges">
-    <div class="badge">
-      <img src="images/badge1.png" alt="Badge1" />
+  <div id="main-container" class="container">
+    <div id="join" v-if="!session" class="col self-center">
+      <div id="join-dialog">
+        <h1>Join a {{ roomName }}</h1>
+        <div class="form-group row justify-center">
+          <p class="text-center">
+            <button class="btn btn-lg btn-success" @click="joinSession()">
+              Join!
+            </button>
+          </p>
+        </div>
+      </div>
     </div>
-    <div class="badge">
-      <img src="images/badge2.png" alt="Badge2" />
+
+    <div id="session" v-if="session">
+      <div id="session-header" class="row justify-center">
+        <div v-if="isVideo">
+          <q-btn
+            @click="videoToggle"
+            round
+            icon="videocam_off"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div v-else>
+          <q-btn
+            @click="videoToggle"
+            round
+            icon="video_camera_front"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div v-if="isAudio">
+          <q-btn
+            @click="audioToggle"
+            round
+            icon="mic_off"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div v-else>
+          <q-btn
+            @click="audioToggle"
+            round
+            icon="mic"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+        <div>
+          <q-btn
+            @click="leaveSession"
+            round
+            icon="logout"
+            stack
+            glossy
+            color="black"
+            style="margin: 10px"
+          />
+        </div>
+      </div>
+      <!-- <div id="main-video" class="col-md-6">
+        <user-video :stream-manager="mainStreamManager" />
+      </div> -->
+      <div id="video-container" class="col-md-6">
+        <user-video
+          :stream-manager="publisher"
+          @click="updateMainVideoStreamManager(publisher)"
+        />
+        <user-video
+          v-for="sub in subscribers"
+          :key="sub.stream.connection.connectionId"
+          :stream-manager="sub"
+          @click="updateMainVideoStreamManager(sub)"
+        />
+      </div>
     </div>
   </div>
-
-  <!--VISUAL-->
-  <section class="visual">
-    <div class="q-pa-md">
-      <div class="inner">
-        <div class="fade-in">
-          <img
-            src="images/visual_1.jpg"
-            alt="visual_1"
-            class="visual_1 image"
-          />
-        </div>
-        <div class="fade-in">
-          <img
-            src="images/visual_2.jpg"
-            alt="visual_2"
-            class="visual_2 image"
-          />
-        </div>
-        <div class="fade-in">
-          <img
-            src="images/visual_3.jpg"
-            alt="visual_3"
-            class="visual_3 image"
-          />
-        </div>
-        <div class="fade-in">
-          <img
-            src="images/visual_4.jpg"
-            alt="visual_4"
-            class="visual_4 image"
-          />
-        </div>
-        <div class="fade-in">
-          <img
-            src="images/visual_5.jpg"
-            alt="visual_5"
-            class="visual_5 image"
-          />
-        </div>
-        <div class="title">
-          <a href="javascript:void(0)" class="btn btn--brown">입장하기</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SOFTWARE -->
-  <section class="software">
-    <div class="inner">
-      <div class="swiper-container">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img src="images/logo-vue.png" alt="vue" />
-          </div>
-          <div class="swiper-slide">
-            <img src="images/logo-quasar.png" alt="quasar" />
-          </div>
-          <div class="swiper-slide">
-            <img src="images/logo-Typescript.png" alt="Typescript" />
-          </div>
-          <div class="swiper-slide">
-            <img src="images/logo-openvidu.png" alt="openvidu" />
-          </div>
-          <div class="swiper-slide">
-            <img src="images/logo-nodejs.png" alt="nodejs" />
-          </div>
-          <div class="swiper-slide">
-            <img src="images/logo-Neo4j.png" alt="Neo4j" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!--DESCRIPTIONS-->
-  <section class="description-1 scroll-spy">
-    <div class="inner">
-      <div class="text-group">
-        <img
-          src="images/description1_cat.png"
-          alt="anything"
-          class="title back-to-position to-left delay-0"
-        />
-      </div>
-    </div>
-  </section>
-
-  <!--DESCRIPTIONS-->
-  <section class="description-2 scroll-spy">
-    <div class="inner">
-      <div class="text-group">
-        <img
-          src="images/description2_cat.png"
-          alt="anytime"
-          class="title back-to-position to-right delay-0"
-        />
-      </div>
-    </div>
-  </section>
-
-  <!--DESCRIPTIONS-->
-  <section class="description-3 scroll-spy">
-    <div class="inner">
-      <div class="text-group">
-        <img
-          src="images/description3_cat.png"
-          alt="anywhere"
-          class="title back-to-position to-left delay-0"
-        />
-      </div>
-    </div>
-  </section>
 </template>
 
-<script lang="ts">
-// Import Swiper Vue.js components
-import { Swiper } from 'swiper';
-import * as _ from 'lodash';
-// Import Swiper styles
-import 'swiper/css';
-import gsap from 'gsap';
-import ScrollMagic from 'scrollmagic';
+<script>
+import axios from "axios";
+import { OpenVidu } from "openvidu-browser";
+import UserVideo from "src/components/UserVideo";
+import { useStore } from "src/store";
+import { useRoute, useRouter } from "vue-router";
+import { Cookies } from "quasar";
+import { computed } from "vue";
+
+axios.defaults.headers.post["Content-Type"] = "application/json";
+
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":5443";
+const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 export default {
-  mounted() {
-    //  * 페이지 스크롤에 따른 요소 제어
-    // 페이지 스크롤에 영향을 받는 요소들을 검색!
-    const badgeEl = document.querySelector('.badges') as HTMLDivElement;
+  name: "App",
 
-    // 페이지에 스크롤 이벤트를 추가!
-    // 스크롤이 지나치게 자주 발생하는 것을 조절(throttle, 일부러 부하를 줌)
-    window.addEventListener(
-      'scroll',
-      _.throttle(function () {
-        // 페이지 스크롤 위치가 500px이 넘으면.
-        if (window.scrollY > 500) {
-          // Badge 요소 숨기기!
-          gsap.to(badgeEl, 0.6, {
-            opacity: 0,
-            display: 'none',
-          });
-          // 페이지 스크롤 위치가 500px이 넘지 않으면.
-        } else {
-          // Badge 요소 보이기!
-          gsap.to(badgeEl, 0.6, {
-            opacity: 1,
-            display: 'block',
-          });
-        }
-      }, 300)
+  components: {
+    UserVideo,
+  },
+
+  data() {
+    return {
+      OV: undefined,
+      session: undefined,
+      mainStreamManager: undefined,
+      publisher: undefined,
+      subscribers: [],
+      isVideo: true,
+      isAudio: true,
+      // index: $store.state.room.index,
+      // room: $store.dispatch("room/getRoom", index),
+      mySessionId: "test",
+      roomName: "undefined",
+
+      //토큰에서 가져와서 쓰면 된다.
+      myUserName: "Participant" + Math.floor(Math.random() * 100),
+    };
+  },
+  created() {
+    const $store = useStore();
+    const route = useRoute();
+    const accessToken = "Bearer " + Cookies.get("access_token");
+    this.roomName = $store.state.room.room.roomName;
+
+    $store.dispatch("room/getRoom", route.params.roomId);
+    this.mySessionId = computed(() =>
+      $store.state.room.room.moderator[0].replace("@", "").replace(".", "")
     );
 
-    new Swiper('.software .swiper-container', {
-      autoplay: {
-        // 자동 재생 여부
-        delay: 500, // 5초마다 슬라이드 바뀜
-      },
-      loop: true, // 반복 재생 여부
-      slidesPerView: 5, // 한 번에 보여줄 슬라이드 개수
-      spaceBetween: 10, // 슬라이드 사이 여백
-      centeredSlides: true, // 1번 슬라이드가 가운데 보이기
-    });
+    console.log(this.mySessionId.replace(/\-/g, ""));
+    if (accessToken) {
+      const base64Url = accessToken.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
 
-    //  * 순서대로 나타나는 기능
-    // 나타날 요소들(.fade-in) 찾기.
-    const fadeEls = document.querySelectorAll('.visual .fade-in');
-    // 나타날 요소들을 하나씩 반복해서 처리!
-    fadeEls.forEach(function (fadeEl, index) {
-      // 각 요소들을 순서대로(delay) 보여지게 함!
-      gsap.to(fadeEl, 1, {
-        delay: (index + 1) * 0.3,
-        opacity: 1,
+      const data = JSON.parse(jsonPayload);
+      this.myUserName = data.email;
+    }
+  },
+
+  methods: {
+    joinSession() {
+      // --- Get an OpenVidu object ---
+      this.OV = new OpenVidu();
+
+      // --- Init a session ---
+      this.session = this.OV.initSession();
+
+      // --- Specify the actions when events take place in the session ---
+
+      // On every new Stream received...
+      this.session.on("streamCreated", ({ stream }) => {
+        const subscriber = this.session.subscribe(stream);
+        this.subscribers.push(subscriber);
       });
-    });
 
-    //  * 요소가 화면에 보여짐 여부에 따른 요소 관리
-    // 관리할 요소들 검색!
-    const spyEls = document.querySelectorAll('section.scroll-spy');
-    // 요소들 반복 처리!
-    spyEls.forEach(function (spyEl) {
-      new ScrollMagic.Scene({
-        // 감시할 장면(Scene)을 추가
-        triggerElement: spyEl, // 보여짐 여부를 감시할 요소를 지정
-        triggerHook: 0.8, // 화면의 80% 지점에서 보여짐 여부 감시
-      })
-        .setClassToggle(spyEl, 'show') // 요소가 화면에 보이면 show 클래스 추가
-        .addTo(new ScrollMagic.Controller()); // 컨트롤러에 장면을 할당(필수!)
-    });
+      // On every Stream destroyed...
+      this.session.on("streamDestroyed", ({ stream }) => {
+        const index = this.subscribers.indexOf(stream.streamManager, 0);
+        if (index >= 0) {
+          this.subscribers.splice(index, 1);
+        }
+      });
+
+      // On every asynchronous exception...
+      this.session.on("exception", ({ exception }) => {
+        console.warn(exception);
+      });
+      // --- Connect to the session with a valid user token ---
+
+      // 'getToken' method is simulating what your server-side should do.
+      // 'token' parameter should be retrieved and returned by your own backend
+      this.getToken(this.mySessionId).then((token) => {
+        console.log(token);
+        this.session
+          .connect(token, { clientData: this.myUserName })
+          .then(() => {
+            // --- Get your own camera stream with the desired properties ---
+
+            let publisher = this.OV.initPublisher(undefined, {
+              audioSource: undefined, // The source of audio. If undefined default microphone
+              videoSource: undefined, // The source of video. If undefined default webcam
+              publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+              publishVideo: true, // Whether you want to start publishing with your video enabled or not
+              resolution: "640x480", // The resolution of your video
+              frameRate: 30, // The frame rate of your video
+              insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+              mirror: false, // Whether to mirror your local video or not
+            });
+
+            this.mainStreamManager = publisher;
+            this.publisher = publisher;
+
+            // --- Publish your stream ---
+
+            this.session.publish(this.publisher);
+          })
+          .catch((error) => {
+            console.log(
+              "There was an error connecting to the session:",
+              error.code,
+              error.message
+            );
+          });
+      });
+
+      window.addEventListener("beforeunload", this.leaveSession);
+    },
+
+    leaveSession() {
+      // --- Leave the session by calling 'disconnect' method over the Session object ---
+      if (this.session) this.session.disconnect();
+
+      this.session = undefined;
+      this.mainStreamManager = undefined;
+      this.publisher = undefined;
+      this.subscribers = [];
+      this.OV = undefined;
+      window.removeEventListener("beforeunload", this.leaveSession);
+      this.$router.push("/roomList");
+    },
+
+    updateMainVideoStreamManager(stream) {
+      if (this.mainStreamManager === stream) return;
+      this.mainStreamManager = stream;
+    },
+
+    videoToggle() {
+      this.isVideo = !this.isVideo;
+      this.publisher.publishVideo(this.isVideo);
+      // this.subscriber.subscribeToVideo(this.isVideo);
+    },
+
+    audioToggle() {
+      this.isAudio = !this.isAudio;
+      this.publisher.publishAudio(this.isAudio);
+      // this.subscriber.subscribeToAudio(this.isAudio);
+    },
+
+    /**
+     * --------------------------
+     * SERVER-SIDE RESPONSIBILITY
+     * --------------------------
+     * These methods retrieve the mandatory user token from OpenVidu Server.
+     * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
+     * the API REST, openvidu-java-client or openvidu-node-client):
+     *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
+     *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+     *   3) The Connection.token must be consumed in Session.connect() method
+     */
+
+    getToken(mySessionId) {
+      return this.createSession(mySessionId).then((sessionId) =>
+        this.createToken(sessionId)
+      );
+    },
+
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
+    createSession(sessionId) {
+      return new Promise((resolve, reject) => {
+        console.log(`${OPENVIDU_SERVER_URL}/openvidu/api/sessions`);
+
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
+            JSON.stringify({
+              customSessionId: sessionId,
+            }),
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.id))
+          .catch((error) => {
+            if (error.response.status === 409) {
+              resolve(sessionId);
+            } else {
+              console.warn(
+                `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}`
+              );
+              if (
+                window.confirm(
+                  `No connection to OpenVidu Server. This may be a certificate error at ${OPENVIDU_SERVER_URL}\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server is up and running at "${OPENVIDU_SERVER_URL}"`
+                )
+              ) {
+                location.assign(`${OPENVIDU_SERVER_URL}/accept-certificate`);
+              }
+              reject(error.response);
+            }
+          });
+      });
+    },
+
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
+    createToken(sessionId) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post(
+            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+            {},
+            {
+              auth: {
+                username: "OPENVIDUAPP",
+                password: OPENVIDU_SERVER_SECRET,
+              },
+            }
+          )
+          .then((response) => response.data)
+          .then((data) => resolve(data.token))
+          .catch((error) => reject(error.response));
+      });
+    },
   },
 };
 </script>
 
-<style scoped>
-/*BADGES*/
-.badges {
-  position: fixed;
-  top: 132px;
-  right: 12px;
+<style>
+/* html {
+  position: relative;
+  min-height: 100%;
+} */
+
+#main-container {
+  padding-bottom: 80px;
 }
-.badges .badge {
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15);
+
+/*vertical-center {
+	position: relative;
+	top: 30%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}*/
+
+.horizontal-center {
+  margin: 0 auto;
+}
+
+.form-control {
+  color: #0088aa;
+  font-weight: bold;
+}
+
+.form-control:focus {
+  border-color: #0088aa;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(0, 136, 170, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(0, 136, 170, 0.6);
+}
+
+input.btn {
+  font-weight: bold;
+}
+
+.btn {
+  font-weight: bold !important;
+}
+
+.btn-success {
+  background-color: #06d362 !important;
+  border-color: #06d362;
+}
+
+.openvidu-logo {
+  height: 35px;
+  float: right;
+  margin: 12px 0;
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+
+#join-dialog {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 70%;
+}
+
+#join-dialog h1 {
+  color: #4d4d4d;
+  font-weight: bold;
+  text-align: center;
+}
+
+#img-div {
+  text-align: center;
+  margin-top: 3em;
+  margin-bottom: 3em;
+  /*position: relative;
+	top: 20%;
+	left: 50%;
+	transform: translate(-50%, -50%);*/
+}
+
+#img-div img {
+  height: 15%;
+}
+
+#join-dialog label {
+  color: #0088aa;
+}
+
+#join-dialog input.btn {
+  margin-top: 15px;
+}
+
+#session-header {
+  margin-bottom: 20px;
+}
+
+#session-title {
+  display: inline-block;
+}
+
+#video-container video {
+  position: relative;
+  float: left;
+  width: 50%;
   cursor: pointer;
 }
 
-/*VISUAL*/
-.visual {
-  margin-bottom: 40px;
-  background-image: url('../../public/images/cover_macbook.png');
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.visual .inner {
-  height: 646px;
-  /* background-color: orange; */
+#video-container video + div {
+  float: left;
+  width: 50%;
+  position: relative;
+  margin-left: -50%;
 }
 
-.visual .inner img {
-  border-radius: 10px;
+#video-container p {
+  display: inline-block;
+  background: #f8f8f8;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #777777;
+  font-weight: bold;
+  border-bottom-right-radius: 4px;
 }
 
-.visual .title {
-  position: absolute;
-  bottom: 250px;
-  right: 380px;
-}
-.visual .title .btn {
-  position: absolute;
+video {
+  width: 100%;
+  height: auto;
 }
 
-.visual .visual_1.image {
+#main-video p {
   position: absolute;
-  top: 100px;
-  left: 180px;
-}
-.visual .visual_2.image {
-  position: absolute;
-  top: 100px;
-  left: 490px;
-}
-.visual .visual_3.image {
-  position: absolute;
-  top: 100px;
-  left: 630px;
-}
-.visual .visual_4.image {
-  position: absolute;
-  bottom: 130px;
-  left: 180px;
-}
-.visual .visual_5.image {
-  position: absolute;
-  bottom: 130px;
-  left: 490px;
-}
-.visual .fade-in {
-  opacity: 0;
+  display: inline-block;
+  background: #f8f8f8;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 22px;
+  color: #777777;
+  font-weight: bold;
+  border-bottom-right-radius: 4px;
 }
 
-/*  SOFTWARE  */
-.software {
-  background-color: #eee;
-}
-.software .inner {
-  padding: 20px 0;
-}
-.software .swiper-container {
-  width: calc(360px * 3 + 20px);
-  height: 70px;
-  margin-left: calc((360 * 3 + 20px) / -2);
-  overflow: hidden;
-}
-.software .swiper-container img {
-  margin: auto;
+#session img {
+  width: 100%;
+  height: auto;
+  display: inline-block;
+  object-fit: contain;
+  vertical-align: baseline;
 }
 
-/*BACK TO POSITION*/
-.back-to-position {
-  opacity: 0;
-  transition: 1s;
-}
-.back-to-position.to-right {
-  transform: translateX(-150px);
-}
-.back-to-position.to-left {
-  transform: translateX(150px);
-}
-.show .back-to-position {
-  opacity: 1;
-  transform: translateX(0);
-}
-.show .back-to-position.delay-0 {
-  transition-delay: 0s;
-}
-.show .back-to-position.delay-1 {
-  transition-delay: 0.3s;
-}
-.show .back-to-position.delay-2 {
-  transition-delay: 0.6s;
-}
-.show .back-to-position.delay-3 {
-  transition-delay: 0.9s;
-}
-/* <!--DESCRIPTIONS--> */
-.description-1 {
-  background-image: url('../../public/images/description_bg1.jpg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-size: cover;
-  height: 700px;
-}
-.description-1 .inner {
-  padding: 110px 0;
-}
-.description-1 .text-group {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-.description-1 .text-group .title {
-  margin-bottom: 40px;
+#session #video-container img {
+  position: relative;
+  float: left;
+  width: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  height: 180px;
 }
 
-.description-2 {
-  background-image: url('../../public/images/description_bg2.jpg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-size: cover;
-  height: 700px;
-}
-.description-2 .inner {
-  padding: 110px 0;
-}
-.description-2 .text-group {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-}
-.description-2 .text-group .title {
-  margin-bottom: 40px;
+/* xs ans md screen resolutions*/
+
+@media screen and (max-width: 991px) and (orientation: portrait) {
+  #join-dialog {
+    max-width: inherit;
+  }
+  #img-div img {
+    height: 10%;
+  }
+  #img-div {
+    margin-top: 2em;
+    margin-bottom: 2em;
+  }
+  .container-fluid > .navbar-collapse,
+  .container-fluid > .navbar-header,
+  .container > .navbar-collapse,
+  .container > .navbar-header {
+    margin-right: 0;
+    margin-left: 0;
+  }
+  .navbar-header i.fa {
+    font-size: 30px;
+  }
+  .navbar-header a.nav-icon {
+    padding: 7px 3px 7px 3px;
+  }
 }
 
-.description-3 {
-  background-image: url('../../public/images/description_bg3.jpg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-size: cover;
-  height: 700px;
-}
-.description-3 .inner {
-  padding: 110px 0;
-}
-.description-3 .text-group {
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-.description-3 .text-group .title {
-  margin-bottom: 40px;
+@media only screen and (max-height: 767px) and (orientation: landscape) {
+  #img-div {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  #join-dialog {
+    max-width: inherit;
+  }
 }
 </style>

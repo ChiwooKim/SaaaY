@@ -17,9 +17,12 @@ import { AccountController } from './controllers/account.controller';
 import { AccountService } from './services/account.service';
 import { ScheduleService } from './services/schedule.service';
 import { ScheduleController } from './controllers/schedule.controller';
-import { UserCustomRepository as UserCustomRepository } from './repositories/user.custom.repository';
 import { TestPhoto } from './entity/samplephoto.entity';
 import { TestPhotoMetadata } from './entity/samplephotometadata.entity';
+import { UserRepository } from './repositories/user.repository';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { EventsModule } from './events/events.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
@@ -30,6 +33,9 @@ import { TestPhotoMetadata } from './entity/samplephotometadata.entity';
     TypeOrmModule.forFeature([User]),
     TypeOrmModule.forFeature([Oauth]),
     TypeOrmModule.forFeature([Role]),
+    AuthModule,
+    UsersModule,
+    EventsModule,
   ],
   controllers: [
     AppController,
@@ -46,7 +52,6 @@ import { TestPhotoMetadata } from './entity/samplephotometadata.entity';
     AccountService,
     UserService,
     ScheduleService,
-    UserCustomRepository,
   ],
 })
 export class AppModule {}

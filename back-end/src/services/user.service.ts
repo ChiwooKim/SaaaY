@@ -3,40 +3,64 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from 'src/entity/role.entity';
 import { User } from 'src/entity/user.entity';
 import { UserDto } from 'src/models/user.dto';
-import { UserCustomRepository } from 'src/repositories/user.custom.repository';
 import { UserRepository } from 'src/repositories/user.repository';
-
+import * as bcrypt from 'bcrypt';
+import { Record, Result } from 'neo4j-driver';
+import { AuthenticationError } from 'src/error/authentication.error';
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: UserRepository,
-    private readonly userCustomRepository: UserCustomRepository,
-  ) {}
+  async findUser(userId: string): Promise<UserDto> {
+    const userDto = await this.userRepository.findById(userId);
+    userDto.password = undefined;
+    return userDto;
+  }
+  private readonly userRepository: UserRepository = new UserRepository();
 
-  public async findUser(userId: string): Promise<User> {
-    // let userDto;
-    // await this.userRepository.findOne(userId).then((m) => {
-    //   return m;
-    // });
-    // return userDto;
-    console.log(await this.userRepository.findOne(userId));
-    // this.userRepository.findOne(userId).then(async (user) => {
-    //   const role: Role = await user.role;
-    //   console.log(role.roleName);
-    //   // const userDto = new UserDto(user);
-    //   // return userDto;
-    // });
-    throw new Error('없는 유저 입니다');
+  async editPassword(userDto: UserDto): Promise<UserDto> {
+    const hash = await bcrypt.hash(userDto.password, this.saltRounds);
+    userDto.password = hash;
+    const result = await this.userRepository.updatePassword(userDto);
+    result.password = undefined;
+    return result;
+  }
+  async editProfile(userDto: UserDto): Promise<UserDto> {
+    const updatedUser: UserDto = await this.userRepository.updateUser(userDto);
+    updatedUser.password = undefined;
+    return updatedUser;
+  }
+  public async findUserByEmail(email: string): Promise<UserDto> {
+    const foundUser = await this.userRepository.findByEmail(email);
+    foundUser.password = undefined;
+    return foundUser;
+  }
+  private saltRounds = 10;
+
+  public async signinUser(userDto: UserDto): Promise<UserDto> {
+    const foundUser = await this.userRepository.findByEmail(userDto.email);
+
+    const storedPassword = foundUser.password;
+
+    const isMatch = await bcrypt.compare(userDto.password, storedPassword);
+    if (!isMatch) {
+      throw new AuthenticationError('틀린 비밀번호');
+    }
+
+    foundUser.password = undefined;
+    return foundUser;
   }
 
-  public async findUserByName(userName: string): Promise<UserDto> {
-    try {
-      const user = await this.userCustomRepository.findByUsername(userName);
-      const userDto = new UserDto(user);
-      return userDto;
-    } catch (err) {
-      throw err;
-    }
+  public async findUserByUsername(userName: string): Promise<UserDto[]> {
+    const userDtos = await this.userRepository.findByUsername(userName);
+    userDtos.forEach((u) => (u.password = undefined));
+    return userDtos;
+  }
+
+  public async createUser(userDto: UserDto): Promise<UserDto> {
+    const password = userDto.password;
+    const hash = await bcrypt.hash(password, this.saltRounds);
+    userDto.password = hash;
+    const result = await this.userRepository.createUser(userDto);
+    result.password = undefined;
+    return result;
   }
 }
