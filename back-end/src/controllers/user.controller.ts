@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { ResourceError } from 'src/error/resource.error';
+import { GoogleCodeDto } from 'src/models/google.code.dto';
 import { UserDto } from 'src/models/user.dto';
 import { UserService } from 'src/services/user.service';
 import { AccountService } from '../services/account.service';
@@ -139,7 +141,7 @@ export class UserController {
 
   @Get('/verify')
   async verify(@Headers('Authorization') accessToken, @Res() res: Response) {
-    console.log('verify user by Access Token');
+    console.log('verify user by Access Token', accessToken);
     const result = await this.authService.verifyUser(accessToken);
     if (result) {
       const user = await this.findByEmail(result.email);

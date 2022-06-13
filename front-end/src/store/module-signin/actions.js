@@ -4,6 +4,7 @@ import { api } from "src/boot/axios";
 export function someAction(/* context */) {}
 
 export function authenticate({ commit }, user) {
+  console.log(user);
   api
     .post("/user/login", user)
     .then((response) => {

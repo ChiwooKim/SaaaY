@@ -33,6 +33,7 @@ export class UserRepository {
     return result[0].get('user').properties;
   }
   async findByEmail(email: string): Promise<UserDto> {
+    console.log(email);
     const result = await executeQuery<Record>(
       `MATCH (user) WHERE user.email = '${email}' RETURN user`,
     );

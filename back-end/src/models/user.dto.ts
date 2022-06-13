@@ -11,9 +11,4 @@ export class UserDto {
   public role: string;
   public follower: UserDto[];
   public following: UserDto[];
-
-  constructor(email: string, password: string) {
-    this.email = email;
-    this.password = password;
-  }
 }
